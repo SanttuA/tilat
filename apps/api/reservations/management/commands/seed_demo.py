@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import time
-from uuid import uuid4
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
@@ -26,7 +25,8 @@ class Command(BaseCommand):
         User = get_user_model()
         user = User.objects.filter(email=email).first()
         if not user:
-            user = User(username=f"demo-{uuid4()}", email=email)
+            user = User(username=email, email=email)
+        user.username = email
         user.email = email
         user.is_staff = is_staff
         user.is_superuser = is_superuser

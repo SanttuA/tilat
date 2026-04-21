@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import uuid
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -62,7 +60,7 @@ class SignupSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         User = get_user_model()
-        user = User(username=f"user-{uuid.uuid4()}", email=attrs["email"])
+        user = User(username=attrs["email"], email=attrs["email"])
         try:
             validate_password(attrs["password"], user=user)
         except DjangoValidationError as exc:
@@ -72,7 +70,7 @@ class SignupSerializer(serializers.Serializer):
     def create(self, validated_data):
         User = get_user_model()
         user = User.objects.create_user(
-            username=f"user-{uuid.uuid4()}",
+            username=validated_data["email"],
             email=validated_data["email"],
             password=validated_data["password"],
         )

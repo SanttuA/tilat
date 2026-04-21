@@ -32,6 +32,7 @@ def test_signup_creates_normal_user_profile_and_token():
     }
 
     user = get_user_model().objects.get(email="user@example.com")
+    assert user.username == "user@example.com"
     assert user.check_password("Local-test-12345")
     profile = user.reservation_profile
     assert not profile.is_admin

@@ -36,6 +36,9 @@ accounts. All demo accounts use the password `Local-demo-12345`:
 - Unit staff: `staff@example.com`
 - Normal user: `user@example.com`
 
+Django admin uses the same email value in its Username field. Only users with
+Django staff access, such as the seeded admin, can sign in at `/admin/`.
+
 ## Server Compose
 
 ```sh

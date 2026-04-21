@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from uuid import uuid4
-
 import pytest
 from django.contrib.auth import get_user_model
 
@@ -18,7 +16,7 @@ def profile_factory(db):
         is_admin: bool = False,
     ) -> UserProfile:
         user = get_user_model().objects.create_user(
-            username=f"test-{uuid4()}",
+            username=email,
             email=email,
             password=password,
         )

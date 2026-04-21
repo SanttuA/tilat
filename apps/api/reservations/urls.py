@@ -3,6 +3,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("auth/signup", views.SignupView.as_view(), name="auth-signup"),
+    path("auth/signin", views.SigninView.as_view(), name="auth-signin"),
+    path("auth/signout", views.SignoutView.as_view(), name="auth-signout"),
     path("resources", views.ResourceListView.as_view(), name="resource-list"),
     path("resources/<uuid:pk>", views.ResourceDetailView.as_view(), name="resource-detail"),
     path(

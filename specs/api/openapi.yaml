@@ -8,6 +8,50 @@ servers:
 security:
   - bearerAuth: []
 paths:
+  /auth/signup:
+    post:
+      operationId: signup
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+      responses:
+        "201":
+          description: Signed-up session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSession"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /auth/signin:
+    post:
+      operationId: signin
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SigninRequest"
+      responses:
+        "200":
+          description: Signed-in session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSession"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /auth/signout:
+    post:
+      operationId: signout
+      responses:
+        "204":
+          description: Signed out
   /resources:
     get:
       operationId: listResources
@@ -463,13 +507,11 @@ components:
             $ref: "#/components/schemas/Reservation"
     UserProfile:
       type: object
-      required: [id, subject, email, name, isAdmin]
+      required: [id, email, name, isAdmin]
       properties:
         id:
           type: string
           format: uuid
-        subject:
-          type: string
         email:
           type: string
           format: email
@@ -477,6 +519,39 @@ components:
           type: string
         isAdmin:
           type: boolean
+    SignupRequest:
+      type: object
+      required: [email, name, password]
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          format: password
+          minLength: 1
+    SigninRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 1
+    AuthSession:
+      type: object
+      required: [token, user]
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/UserProfile"
     Me:
       allOf:
         - $ref: "#/components/schemas/UserProfile"

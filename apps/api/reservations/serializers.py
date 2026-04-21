@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+import uuid
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
+from .auth import create_access_token
 from .models import (
     OpeningHours,
     Reservation,
@@ -12,6 +18,10 @@ from .models import (
     validate_localized_text,
 )
 from .services import create_reservation
+
+
+def normalize_email(value: str) -> str:
+    return value.strip().lower()
 
 
 class LocalizedTextField(serializers.JSONField):
@@ -26,11 +36,70 @@ class LocalizedTextField(serializers.JSONField):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    isAdmin = serializers.BooleanField(source="is_admin_claim")
+    email = serializers.EmailField(source="user.email", read_only=True)
+    isAdmin = serializers.BooleanField(source="is_admin")
 
     class Meta:
         model = UserProfile
-        fields = ["id", "subject", "email", "name", "isAdmin"]
+        fields = ["id", "email", "name", "isAdmin"]
+
+
+class AuthSessionSerializer(serializers.Serializer):
+    token = serializers.CharField(read_only=True)
+    user = UserProfileSerializer(read_only=True)
+
+
+class SignupSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    name = serializers.CharField(max_length=255, allow_blank=False, trim_whitespace=True)
+    password = serializers.CharField(write_only=True, trim_whitespace=False)
+
+    def validate_email(self, value: str) -> str:
+        email = normalize_email(value)
+        if get_user_model().objects.filter(email__iexact=email).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return email
+
+    def validate(self, attrs):
+        User = get_user_model()
+        user = User(username=f"user-{uuid.uuid4()}", email=attrs["email"])
+        try:
+            validate_password(attrs["password"], user=user)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError({"password": exc.messages}) from exc
+        return attrs
+
+    def create(self, validated_data):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username=f"user-{uuid.uuid4()}",
+            email=validated_data["email"],
+            password=validated_data["password"],
+        )
+        profile = UserProfile.objects.create(user=user, name=validated_data["name"], is_admin=False)
+        token, _ = create_access_token(profile)
+        return {"token": token, "user": profile}
+
+
+class SigninSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, trim_whitespace=False)
+
+    def validate(self, attrs):
+        email = normalize_email(attrs["email"])
+        user = get_user_model().objects.filter(email__iexact=email, is_active=True).first()
+        if not user or not user.check_password(attrs["password"]):
+            raise serializers.ValidationError("Invalid email or password.")
+        try:
+            profile = user.reservation_profile
+        except UserProfile.DoesNotExist as exc:
+            raise serializers.ValidationError("User profile is missing.") from exc
+        attrs["profile"] = profile
+        return attrs
+
+    def create(self, validated_data):
+        token, _ = create_access_token(validated_data["profile"])
+        return {"token": token, "user": validated_data["profile"]}
 
 
 class UnitSerializer(serializers.ModelSerializer):

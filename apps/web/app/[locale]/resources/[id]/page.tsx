@@ -1,6 +1,9 @@
+import Link from "next/link";
+
 import { BookingForm } from "@/components/BookingForm";
 import { createReservationAction } from "@/app/[locale]/actions";
 import { getAvailability, getResource } from "@/lib/api";
+import { getAccessToken } from "@/lib/auth";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
 
 function todayIso() {
@@ -20,6 +23,7 @@ export default async function ResourceDetailPage({
   const { date = todayIso() } = await searchParams;
   const resource = await getResource(id);
   const availability = await getAvailability(id, date);
+  const accessToken = await getAccessToken();
 
   return (
     <>
@@ -50,13 +54,23 @@ export default async function ResourceDetailPage({
           </button>
         </form>
       </section>
-      <BookingForm
-        action={createReservationAction}
-        availability={availability}
-        locale={locale}
-        messages={messages}
-        resource={resource}
-      />
+      {accessToken ? (
+        <BookingForm
+          action={createReservationAction}
+          availability={availability}
+          locale={locale}
+          messages={messages}
+          resource={resource}
+        />
+      ) : (
+        <section className="card" aria-labelledby="signin-title">
+          <h2 id="signin-title">{t(messages, "auth.requiredTitle")}</h2>
+          <p>{t(messages, "auth.required")}</p>
+          <Link className="button" href={`/${locale}/sign-in?next=/${locale}/resources/${id}`}>
+            {t(messages, "nav.signIn")}
+          </Link>
+        </section>
+      )}
     </>
   );
 }

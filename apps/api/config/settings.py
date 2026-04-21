@@ -91,7 +91,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ["reservations.auth.OIDCBearerAuthentication"],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["reservations.auth.ProfileTokenAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
@@ -106,7 +106,4 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-OIDC_ISSUER = os.getenv("OIDC_ISSUER", "")
-OIDC_AUDIENCE = os.getenv("OIDC_CLIENT_ID", "reservation-mvp")
-OIDC_ADMIN_GROUP = os.getenv("AUTHENTIK_ADMIN_GROUP", "reservation-admins")
-OIDC_JWKS_CACHE_SECONDS = int(os.getenv("OIDC_JWKS_CACHE_SECONDS", "300"))
+PASSWORD_AUTH_TOKEN_TTL_DAYS = int(os.getenv("PASSWORD_AUTH_TOKEN_TTL_DAYS", "30"))

@@ -3,6 +3,7 @@ import { cancelOwnReservationAction } from "@/app/[locale]/actions";
 import { listOwnReservations } from "@/lib/api";
 import { getAccessToken } from "@/lib/auth";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
+import { redirect } from "next/navigation";
 
 export default async function ReservationsPage({
   params,
@@ -12,7 +13,11 @@ export default async function ReservationsPage({
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "fi";
   const messages = getMessages(locale);
-  const reservations = await listOwnReservations(await getAccessToken());
+  const token = await getAccessToken();
+  if (!token) {
+    redirect(`/${locale}/sign-in?next=/${locale}/reservations`);
+  }
+  const reservations = await listOwnReservations(token);
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { createReservationApiClient, type components } from "@reservation/api-client";
 
-import { demoAvailability, demoResource, demoResources, demoStaff } from "./demo-data";
+import { demoAvailability, demoResource, demoResources } from "./demo-data";
 
 const baseUrl =
   process.env.API_INTERNAL_ORIGIN ?? process.env.API_ORIGIN ?? "http://localhost:8000/api/v1";
@@ -51,6 +51,18 @@ export async function getAvailability(id: string, date: string) {
   }
 }
 
+export async function signUp(body: components["schemas"]["SignupRequest"]) {
+  return api().POST("/auth/signup", { body });
+}
+
+export async function signIn(body: components["schemas"]["SigninRequest"]) {
+  return api().POST("/auth/signin", { body });
+}
+
+export async function signOut(accessToken: string) {
+  return api(accessToken).POST("/auth/signout");
+}
+
 export async function getMe(accessToken?: string) {
   if (!accessToken) return null;
   try {
@@ -58,7 +70,7 @@ export async function getMe(accessToken?: string) {
     if (error || !data) throw new Error("Me request failed");
     return data;
   } catch {
-    return process.env.NODE_ENV === "development" ? demoStaff : null;
+    return null;
   }
 }
 
@@ -80,7 +92,7 @@ export async function listStaffUnits(accessToken?: string) {
     if (error || !data) throw new Error("Staff units failed");
     return data;
   } catch {
-    return [demoResource.unit];
+    return [];
   }
 }
 

@@ -1,7 +1,8 @@
 # Permissions
 
-authentik provides identity and a global `reservation-admins` group claim. Unit
-staff assignments live in this application.
+Identity is owned by this application using Django-managed email/password users.
+Global app admin and unit staff assignments live in this application and are
+assigned through the backend.
 
 ## Roles
 
@@ -24,4 +25,5 @@ Unit staff cannot:
 ## Admin
 
 Admins can manage all units, resources, reservations, users, and staff
-memberships. Admin status comes only from authentik group claims.
+memberships. Admin status is an app-owned profile flag assigned through Django
+admin or backend maintenance workflows.

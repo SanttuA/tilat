@@ -54,54 +54,8 @@ services:
     depends_on:
       - web
       - api
-      - authentik-server
-
-  authentik-postgresql:
-    image: postgres:16-alpine
-    env_file: *server-env
-    environment:
-      POSTGRES_DB: authentik
-      POSTGRES_USER: authentik
-      POSTGRES_PASSWORD: ${PG_PASS:?database password required}
-    volumes:
-      - authentik-db:/var/lib/postgresql/data
-
-  authentik-server:
-    image: ghcr.io/goauthentik/server:${AUTHENTIK_TAG:-2026.2.2}
-    command: server
-    env_file: *server-env
-    environment:
-      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
-      AUTHENTIK_POSTGRESQL__NAME: authentik
-      AUTHENTIK_POSTGRESQL__USER: authentik
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?database password required}
-      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
-    depends_on:
-      - authentik-postgresql
-    volumes:
-      - authentik-media:/media
-      - ./docker/authentik:/blueprints
-
-  authentik-worker:
-    image: ghcr.io/goauthentik/server:${AUTHENTIK_TAG:-2026.2.2}
-    command: worker
-    env_file: *server-env
-    environment:
-      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
-      AUTHENTIK_POSTGRESQL__NAME: authentik
-      AUTHENTIK_POSTGRESQL__USER: authentik
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?database password required}
-      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
-    depends_on:
-      - authentik-postgresql
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - authentik-media:/media
-      - ./docker/authentik:/blueprints
 
 volumes:
   app-db:
-  authentik-db:
-  authentik-media:
   caddy-data:
   caddy-config:

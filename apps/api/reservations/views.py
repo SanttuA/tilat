@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.dateparse import parse_date
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, response, status, views
@@ -15,6 +16,7 @@ from .permissions import (
     staff_unit_ids,
 )
 from .serializers import (
+    AuthSessionSerializer,
     AvailabilitySerializer,
     EmptySerializer,
     MeSerializer,
@@ -22,6 +24,8 @@ from .serializers import (
     ReservationSerializer,
     ResourceSerializer,
     ResourceWriteSerializer,
+    SigninSerializer,
+    SignupSerializer,
     UnitSerializer,
     UnitStaffMembershipSerializer,
     UnitStaffMembershipWriteSerializer,
@@ -35,12 +39,52 @@ from .services import (
 )
 
 
+class SignupView(views.APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    @extend_schema(request=SignupSerializer, responses={201: AuthSessionSerializer})
+    def post(self, request):
+        serializer = SignupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        session = serializer.save()
+        return response.Response(AuthSessionSerializer(session).data, status=status.HTTP_201_CREATED)
+
+
+class SigninView(views.APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    @extend_schema(request=SigninSerializer, responses=AuthSessionSerializer)
+    def post(self, request):
+        serializer = SigninSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        session = serializer.save()
+        return response.Response(AuthSessionSerializer(session).data)
+
+
+class SignoutView(views.APIView):
+    permission_classes = [IsAuthenticatedProfile]
+
+    @extend_schema(request=EmptySerializer, responses={204: None})
+    def post(self, request):
+        if request.auth:
+            request.auth.revoked_at = timezone.now()
+            request.auth.save(update_fields=["revoked_at", "updated_at"])
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class ResourceListView(generics.ListAPIView):
     serializer_class = ResourceSerializer
 
     def get_queryset(self):
-        queryset = Resource.objects.select_related("unit").prefetch_related("opening_hours").order_by(
-            "unit__name", "name",
+        queryset = (
+            Resource.objects.select_related("unit")
+            .prefetch_related("opening_hours")
+            .order_by(
+                "unit__name",
+                "name",
+            )
         )
         search = self.request.query_params.get("search")
         if search:

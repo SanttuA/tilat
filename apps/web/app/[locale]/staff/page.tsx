@@ -1,7 +1,9 @@
+import { redirect } from "next/navigation";
+
 import { reservationStaffAction } from "@/app/[locale]/actions";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getAccessToken } from "@/lib/auth";
-import { listStaffReservations, listStaffUnits } from "@/lib/api";
+import { getMe, listStaffReservations, listStaffUnits } from "@/lib/api";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
 
 export default async function StaffPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -9,6 +11,26 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "fi";
   const messages = getMessages(locale);
   const token = await getAccessToken();
+  if (!token) {
+    redirect(`/${locale}/sign-in?next=/${locale}/staff`);
+  }
+  const me = await getMe(token);
+  if (!me) {
+    redirect(`/${locale}/sign-in?next=/${locale}/staff`);
+  }
+  if (!me.isAdmin && me.staffUnitIds.length === 0) {
+    return (
+      <>
+        <section className="hero" aria-labelledby="page-title">
+          <h1 id="page-title">{t(messages, "staff.title")}</h1>
+        </section>
+        <section className="card" aria-labelledby="unauthorized-title">
+          <h2 id="unauthorized-title">{t(messages, "auth.unauthorizedTitle")}</h2>
+          <p>{t(messages, "auth.staffUnauthorized")}</p>
+        </section>
+      </>
+    );
+  }
   const [units, reservations] = await Promise.all([
     listStaffUnits(token),
     listStaffReservations(token),
@@ -51,6 +73,7 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
                   </td>
                   <td>
                     <form action={reservationStaffAction} className="actions">
+                      <input name="locale" type="hidden" value={locale} />
                       <input name="reservationId" type="hidden" value={reservation.id} />
                       <button className="button" name="action" type="submit" value="approve">
                         {t(messages, "staff.approve")}

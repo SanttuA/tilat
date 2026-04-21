@@ -5,7 +5,7 @@ import pytest
 from django.core.exceptions import ValidationError
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
-from reservations.models import OpeningHours, Resource, Unit, UserProfile
+from reservations.models import OpeningHours, Resource, Unit
 from reservations.services import availability_for_resource, create_reservation
 
 
@@ -33,8 +33,8 @@ def resource(unit):
 
 
 @pytest.fixture
-def user(db):
-    return UserProfile.objects.create(subject="user", email="user@example.com", name="User")
+def user(profile_factory):
+    return profile_factory()
 
 
 def aware(day: date, hour: int):

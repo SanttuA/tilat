@@ -4,914 +4,914 @@
  */
 
 export interface paths {
-  "/auth/signup": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["signup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["signup"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/auth/signin": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/signin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["signin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["signin"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/auth/signout": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/signout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["signout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["signout"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/resources": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listResources"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["listResources"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/resources/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/resources/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getResource"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["getResource"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/resources/{id}/availability": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/resources/{id}/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getResourceAvailability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["getResourceAvailability"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/me": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["getMe"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/reservations": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listOwnReservations"];
+        put?: never;
+        post: operations["createReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["listOwnReservations"];
-    put?: never;
-    post: operations["createReservation"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/reservations/{id}/cancel": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/reservations/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["cancelReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["cancelReservation"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/staff/units": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/units": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listStaffUnits"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["listStaffUnits"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/staff/resources": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/resources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createStaffResource"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["createStaffResource"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/staff/resources/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/resources/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["updateStaffResource"];
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch: operations["updateStaffResource"];
-    trace?: never;
-  };
-  "/staff/reservations": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listStaffReservations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["listStaffReservations"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/staff/reservations/{id}/approve": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/reservations/{id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approveReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["approveReservation"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/staff/reservations/{id}/deny": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/reservations/{id}/deny": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["denyReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["denyReservation"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/staff/reservations/{id}/cancel": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/reservations/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["staffCancelReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["staffCancelReservation"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/staff/memberships": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/memberships": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listStaffMemberships"];
+        put?: never;
+        post: operations["createStaffMembership"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["listStaffMemberships"];
-    put?: never;
-    post: operations["createStaffMembership"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/staff/memberships/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/staff/memberships/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteStaffMembership"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete: operations["deleteStaffMembership"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    LocalizedText: {
-      fi: string;
-      en: string;
+    schemas: {
+        LocalizedText: {
+            fi: string;
+            en: string;
+        };
+        Error: {
+            detail: string;
+            fields?: {
+                [key: string]: string[];
+            };
+        };
+        Unit: {
+            /** Format: uuid */
+            id: string;
+            name: components["schemas"]["LocalizedText"];
+            address: components["schemas"]["LocalizedText"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        Resource: {
+            /** Format: uuid */
+            id: string;
+            unit: components["schemas"]["Unit"];
+            name: components["schemas"]["LocalizedText"];
+            description: components["schemas"]["LocalizedText"];
+            reservationInstructions?: components["schemas"]["LocalizedText"];
+            capacity: number;
+            /** @enum {integer} */
+            slotMinutes: 15 | 30 | 45 | 60 | 90 | 120;
+            requiresApproval: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        ResourceWrite: {
+            /** Format: uuid */
+            unitId: string;
+            name: components["schemas"]["LocalizedText"];
+            description?: components["schemas"]["LocalizedText"];
+            reservationInstructions?: components["schemas"]["LocalizedText"];
+            capacity: number;
+            slotMinutes: number;
+            requiresApproval: boolean;
+        };
+        ResourcePage: {
+            count: number;
+            results: components["schemas"]["Resource"][];
+        };
+        AvailabilitySlot: {
+            /** Format: date-time */
+            start: string;
+            /** Format: date-time */
+            end: string;
+            available: boolean;
+        };
+        Availability: {
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: date */
+            date: string;
+            slots: components["schemas"]["AvailabilitySlot"][];
+        };
+        /** @enum {string} */
+        ReservationState: "requested" | "confirmed" | "denied" | "cancelled";
+        Reservation: {
+            /** Format: uuid */
+            id: string;
+            resource: components["schemas"]["Resource"];
+            user: components["schemas"]["UserProfile"];
+            /** Format: date-time */
+            begin: string;
+            /** Format: date-time */
+            end: string;
+            state: components["schemas"]["ReservationState"];
+            note?: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        ReservationCreate: {
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: date-time */
+            begin: string;
+            /** Format: date-time */
+            end: string;
+            note?: string;
+        };
+        ReservationPage: {
+            count: number;
+            results: components["schemas"]["Reservation"][];
+        };
+        UserProfile: {
+            /** Format: uuid */
+            id: string;
+            /** Format: email */
+            email: string;
+            name: string;
+            isAdmin: boolean;
+        };
+        SignupRequest: {
+            /** Format: email */
+            email: string;
+            name: string;
+            /** Format: password */
+            password: string;
+        };
+        SigninRequest: {
+            /** Format: email */
+            email: string;
+            /** Format: password */
+            password: string;
+        };
+        AuthSession: {
+            token: string;
+            user: components["schemas"]["UserProfile"];
+        };
+        Me: components["schemas"]["UserProfile"] & {
+            staffUnitIds: string[];
+        };
+        UnitStaffMembership: {
+            /** Format: uuid */
+            id: string;
+            unit: components["schemas"]["Unit"];
+            user: components["schemas"]["UserProfile"];
+            /** Format: date-time */
+            createdAt: string;
+        };
+        UnitStaffMembershipWrite: {
+            /** Format: uuid */
+            unitId: string;
+            /** Format: uuid */
+            userId: string;
+        };
     };
-    Error: {
-      detail: string;
-      fields?: {
-        [key: string]: string[];
-      };
+    responses: {
+        /** @description Bad request */
+        BadRequest: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
+        /** @description Not found */
+        NotFound: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["Error"];
+            };
+        };
     };
-    Unit: {
-      /** Format: uuid */
-      id: string;
-      name: components["schemas"]["LocalizedText"];
-      address: components["schemas"]["LocalizedText"];
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
+    parameters: {
+        Id: string;
+        Search: string;
+        Page: number;
     };
-    Resource: {
-      /** Format: uuid */
-      id: string;
-      unit: components["schemas"]["Unit"];
-      name: components["schemas"]["LocalizedText"];
-      description: components["schemas"]["LocalizedText"];
-      reservationInstructions?: components["schemas"]["LocalizedText"];
-      capacity: number;
-      /** @enum {integer} */
-      slotMinutes: 15 | 30 | 45 | 60 | 90 | 120;
-      requiresApproval: boolean;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    ResourceWrite: {
-      /** Format: uuid */
-      unitId: string;
-      name: components["schemas"]["LocalizedText"];
-      description?: components["schemas"]["LocalizedText"];
-      reservationInstructions?: components["schemas"]["LocalizedText"];
-      capacity: number;
-      slotMinutes: number;
-      requiresApproval: boolean;
-    };
-    ResourcePage: {
-      count: number;
-      results: components["schemas"]["Resource"][];
-    };
-    AvailabilitySlot: {
-      /** Format: date-time */
-      start: string;
-      /** Format: date-time */
-      end: string;
-      available: boolean;
-    };
-    Availability: {
-      /** Format: uuid */
-      resourceId: string;
-      /** Format: date */
-      date: string;
-      slots: components["schemas"]["AvailabilitySlot"][];
-    };
-    /** @enum {string} */
-    ReservationState: "requested" | "confirmed" | "denied" | "cancelled";
-    Reservation: {
-      /** Format: uuid */
-      id: string;
-      resource: components["schemas"]["Resource"];
-      user: components["schemas"]["UserProfile"];
-      /** Format: date-time */
-      begin: string;
-      /** Format: date-time */
-      end: string;
-      state: components["schemas"]["ReservationState"];
-      note?: string;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    ReservationCreate: {
-      /** Format: uuid */
-      resourceId: string;
-      /** Format: date-time */
-      begin: string;
-      /** Format: date-time */
-      end: string;
-      note?: string;
-    };
-    ReservationPage: {
-      count: number;
-      results: components["schemas"]["Reservation"][];
-    };
-    UserProfile: {
-      /** Format: uuid */
-      id: string;
-      /** Format: email */
-      email: string;
-      name: string;
-      isAdmin: boolean;
-    };
-    SignupRequest: {
-      /** Format: email */
-      email: string;
-      name: string;
-      /** Format: password */
-      password: string;
-    };
-    SigninRequest: {
-      /** Format: email */
-      email: string;
-      /** Format: password */
-      password: string;
-    };
-    AuthSession: {
-      token: string;
-      user: components["schemas"]["UserProfile"];
-    };
-    Me: components["schemas"]["UserProfile"] & {
-      staffUnitIds: string[];
-    };
-    UnitStaffMembership: {
-      /** Format: uuid */
-      id: string;
-      unit: components["schemas"]["Unit"];
-      user: components["schemas"]["UserProfile"];
-      /** Format: date-time */
-      createdAt: string;
-    };
-    UnitStaffMembershipWrite: {
-      /** Format: uuid */
-      unitId: string;
-      /** Format: uuid */
-      userId: string;
-    };
-  };
-  responses: {
-    /** @description Bad request */
-    BadRequest: {
-      headers: {
-        [name: string]: unknown;
-      };
-      content: {
-        "application/json": components["schemas"]["Error"];
-      };
-    };
-    /** @description Not found */
-    NotFound: {
-      headers: {
-        [name: string]: unknown;
-      };
-      content: {
-        "application/json": components["schemas"]["Error"];
-      };
-    };
-  };
-  parameters: {
-    Id: string;
-    Search: string;
-    Page: number;
-  };
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  signup: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SignupRequest"];
-      };
-    };
-    responses: {
-      /** @description Signed-up session */
-      201: {
-        headers: {
-          [name: string]: unknown;
+    signup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["AuthSession"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignupRequest"];
+            };
         };
-      };
-      400: components["responses"]["BadRequest"];
-    };
-  };
-  signin: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SigninRequest"];
-      };
-    };
-    responses: {
-      /** @description Signed-in session */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        responses: {
+            /** @description Signed-up session */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthSession"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
         };
-        content: {
-          "application/json": components["schemas"]["AuthSession"];
+    };
+    signin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      400: components["responses"]["BadRequest"];
-    };
-  };
-  signout: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Signed out */
-      204: {
-        headers: {
-          [name: string]: unknown;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SigninRequest"];
+            };
         };
-        content?: never;
-      };
-    };
-  };
-  listResources: {
-    parameters: {
-      query?: {
-        search?: components["parameters"]["Search"];
-        page?: components["parameters"]["Page"];
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Resource page */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        responses: {
+            /** @description Signed-in session */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthSession"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
         };
-        content: {
-          "application/json": components["schemas"]["ResourcePage"];
+    };
+    signout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-    };
-  };
-  getResource: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: components["parameters"]["Id"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Resource detail */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        requestBody?: never;
+        responses: {
+            /** @description Signed out */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
-        content: {
-          "application/json": components["schemas"]["Resource"];
+    };
+    listResources: {
+        parameters: {
+            query?: {
+                search?: components["parameters"]["Search"];
+                page?: components["parameters"]["Page"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      404: components["responses"]["NotFound"];
-    };
-  };
-  getResourceAvailability: {
-    parameters: {
-      query: {
-        date: string;
-      };
-      header?: never;
-      path: {
-        id: components["parameters"]["Id"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Daily availability */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        requestBody?: never;
+        responses: {
+            /** @description Resource page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResourcePage"];
+                };
+            };
         };
-        content: {
-          "application/json": components["schemas"]["Availability"];
+    };
+    getResource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
         };
-      };
-    };
-  };
-  getMe: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Current user */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        requestBody?: never;
+        responses: {
+            /** @description Resource detail */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Resource"];
+                };
+            };
+            404: components["responses"]["NotFound"];
         };
-        content: {
-          "application/json": components["schemas"]["Me"];
+    };
+    getResourceAvailability: {
+        parameters: {
+            query: {
+                date: string;
+            };
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
         };
-      };
-    };
-  };
-  listOwnReservations: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Own reservations */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        requestBody?: never;
+        responses: {
+            /** @description Daily availability */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Availability"];
+                };
+            };
         };
-        content: {
-          "application/json": components["schemas"]["ReservationPage"];
+    };
+    getMe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-    };
-  };
-  createReservation: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ReservationCreate"];
-      };
-    };
-    responses: {
-      /** @description Reservation created */
-      201: {
-        headers: {
-          [name: string]: unknown;
+        requestBody?: never;
+        responses: {
+            /** @description Current user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
         };
-        content: {
-          "application/json": components["schemas"]["Reservation"];
+    };
+    listOwnReservations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      400: components["responses"]["BadRequest"];
-    };
-  };
-  cancelReservation: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: components["parameters"]["Id"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Cancelled reservation */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        requestBody?: never;
+        responses: {
+            /** @description Own reservations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReservationPage"];
+                };
+            };
         };
-        content: {
-          "application/json": components["schemas"]["Reservation"];
+    };
+    createReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-    };
-  };
-  listStaffUnits: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Staff-manageable units */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReservationCreate"];
+            };
         };
-        content: {
-          "application/json": components["schemas"]["Unit"][];
+        responses: {
+            /** @description Reservation created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Reservation"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
         };
-      };
     };
-  };
-  createStaffResource: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ResourceWrite"];
-      };
-    };
-    responses: {
-      /** @description Created resource */
-      201: {
-        headers: {
-          [name: string]: unknown;
+    cancelReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["Resource"];
+        requestBody?: never;
+        responses: {
+            /** @description Cancelled reservation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Reservation"];
+                };
+            };
         };
-      };
     };
-  };
-  updateStaffResource: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: components["parameters"]["Id"];
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ResourceWrite"];
-      };
-    };
-    responses: {
-      /** @description Updated resource */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    listStaffUnits: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["Resource"];
+        requestBody?: never;
+        responses: {
+            /** @description Staff-manageable units */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unit"][];
+                };
+            };
         };
-      };
     };
-  };
-  listStaffReservations: {
-    parameters: {
-      query?: {
-        unit?: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Staff-visible reservations */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    createStaffResource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["ReservationPage"];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResourceWrite"];
+            };
         };
-      };
-    };
-  };
-  approveReservation: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: components["parameters"]["Id"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Approved reservation */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        responses: {
+            /** @description Created resource */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Resource"];
+                };
+            };
         };
-        content: {
-          "application/json": components["schemas"]["Reservation"];
+    };
+    updateStaffResource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
         };
-      };
-    };
-  };
-  denyReservation: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: components["parameters"]["Id"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Denied reservation */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResourceWrite"];
+            };
         };
-        content: {
-          "application/json": components["schemas"]["Reservation"];
+        responses: {
+            /** @description Updated resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Resource"];
+                };
+            };
         };
-      };
     };
-  };
-  staffCancelReservation: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: components["parameters"]["Id"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Cancelled reservation */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    listStaffReservations: {
+        parameters: {
+            query?: {
+                unit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["Reservation"];
+        requestBody?: never;
+        responses: {
+            /** @description Staff-visible reservations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReservationPage"];
+                };
+            };
         };
-      };
     };
-  };
-  listStaffMemberships: {
-    parameters: {
-      query?: {
-        unit?: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Staff memberships */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    approveReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["UnitStaffMembership"][];
+        requestBody?: never;
+        responses: {
+            /** @description Approved reservation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Reservation"];
+                };
+            };
         };
-      };
     };
-  };
-  createStaffMembership: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UnitStaffMembershipWrite"];
-      };
-    };
-    responses: {
-      /** @description Created membership */
-      201: {
-        headers: {
-          [name: string]: unknown;
+    denyReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["UnitStaffMembership"];
+        requestBody?: never;
+        responses: {
+            /** @description Denied reservation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Reservation"];
+                };
+            };
         };
-      };
     };
-  };
-  deleteStaffMembership: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: components["parameters"]["Id"];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted membership */
-      204: {
-        headers: {
-          [name: string]: unknown;
+    staffCancelReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
         };
-        content?: never;
-      };
+        requestBody?: never;
+        responses: {
+            /** @description Cancelled reservation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Reservation"];
+                };
+            };
+        };
     };
-  };
+    listStaffMemberships: {
+        parameters: {
+            query?: {
+                unit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Staff memberships */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnitStaffMembership"][];
+                };
+            };
+        };
+    };
+    createStaffMembership: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UnitStaffMembershipWrite"];
+            };
+        };
+        responses: {
+            /** @description Created membership */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnitStaffMembership"];
+                };
+            };
+        };
+    };
+    deleteStaffMembership: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted membership */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
 }

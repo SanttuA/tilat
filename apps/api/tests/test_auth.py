@@ -56,6 +56,25 @@ def test_signup_rejects_duplicate_email(profile_factory):
 
 
 @pytest.mark.django_db
+def test_signup_rejects_email_that_matches_existing_username():
+    get_user_model().objects.create_user(
+        username="duplicate@example.com",
+        email="other@example.com",
+        password="Local-test-12345",
+    )
+    client = APIClient()
+
+    response = client.post(
+        "/api/v1/auth/signup",
+        {"email": "DUPLICATE@example.com", "name": "Duplicate", "password": "Local-test-12345"},
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert "email" in response.data
+
+
+@pytest.mark.django_db
 def test_signin_succeeds_and_rejects_invalid_credentials(profile_factory):
     profile_factory(email="user@example.com", password="Correct-test-12345")
     client = APIClient()
@@ -75,6 +94,60 @@ def test_signin_succeeds_and_rejects_invalid_credentials(profile_factory):
     assert success.data["token"]
     assert success.data["user"]["email"] == "user@example.com"
     assert failure.status_code == 400
+
+
+@pytest.mark.django_db
+def test_signin_checks_all_active_users_with_duplicate_email():
+    User = get_user_model()
+    first = User.objects.create_user(
+        username="legacy-first",
+        email="shared@example.com",
+        password="First-test-12345",
+    )
+    first_profile = UserProfile.objects.create(user=first, name="First User")
+    second = User.objects.create_user(
+        username="legacy-second",
+        email="shared@example.com",
+        password="Second-test-12345",
+    )
+    second_profile = UserProfile.objects.create(user=second, name="Second User")
+    client = APIClient()
+
+    response = client.post(
+        "/api/v1/auth/signin",
+        {"email": "shared@example.com", "password": "Second-test-12345"},
+        format="json",
+    )
+
+    assert response.status_code == 200
+    assert response.data["user"]["id"] == str(second_profile.id)
+    assert response.data["user"]["id"] != str(first_profile.id)
+
+
+@pytest.mark.django_db
+def test_signin_rejects_duplicate_email_when_password_matches_multiple_users():
+    User = get_user_model()
+    first = User.objects.create_user(
+        username="legacy-first",
+        email="shared@example.com",
+        password="Shared-test-12345",
+    )
+    UserProfile.objects.create(user=first, name="First User")
+    second = User.objects.create_user(
+        username="legacy-second",
+        email="shared@example.com",
+        password="Shared-test-12345",
+    )
+    UserProfile.objects.create(user=second, name="Second User")
+    client = APIClient()
+
+    response = client.post(
+        "/api/v1/auth/signin",
+        {"email": "shared@example.com", "password": "Shared-test-12345"},
+        format="json",
+    )
+
+    assert response.status_code == 400
 
 
 @pytest.mark.django_db

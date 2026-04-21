@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import Q
 from rest_framework import serializers
 
 from .auth import create_access_token
@@ -54,7 +55,7 @@ class SignupSerializer(serializers.Serializer):
 
     def validate_email(self, value: str) -> str:
         email = normalize_email(value)
-        if get_user_model().objects.filter(email__iexact=email).exists():
+        if get_user_model().objects.filter(Q(email__iexact=email) | Q(username__iexact=email)).exists():
             raise serializers.ValidationError("A user with this email already exists.")
         return email
 
@@ -85,9 +86,14 @@ class SigninSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         email = normalize_email(attrs["email"])
-        user = get_user_model().objects.filter(email__iexact=email, is_active=True).first()
-        if not user or not user.check_password(attrs["password"]):
+        users = get_user_model().objects.filter(
+            Q(email__iexact=email) | Q(username__iexact=email),
+            is_active=True,
+        )
+        matching_users = [user for user in users if user.check_password(attrs["password"])]
+        if len(matching_users) != 1:
             raise serializers.ValidationError("Invalid email or password.")
+        user = matching_users[0]
         try:
             profile = user.reservation_profile
         except UserProfile.DoesNotExist as exc:

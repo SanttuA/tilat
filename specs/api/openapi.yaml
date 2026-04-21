@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Reservation MVP API
   version: 0.1.0
-  description: MVP-native reservation API. This is not Respa-compatible.
+  description: MVP-native reservation API.
 servers:
   - url: /api/v1
 security:

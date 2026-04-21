@@ -1,7 +1,8 @@
 # Product MVP
 
-The MVP is a bilingual, accessible reservation service. It borrows the product
-flow from Respa/Varaamo but uses a new API and a smaller domain.
+The MVP is a bilingual, accessible reservation service for browsing resources,
+viewing availability, and managing bookings. It uses a product-specific domain
+and API.
 
 ## User Goals
 
@@ -27,7 +28,7 @@ flow from Respa/Varaamo but uses a new API and a smaller domain.
 
 ## Out Of Scope For V1
 
-- Respa API compatibility.
+- Legacy reservation API compatibility.
 - Payments.
 - External calendar sync.
 - Catering, reports, maps, and geospatial filtering.

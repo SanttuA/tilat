@@ -1,14 +1,18 @@
 # Accessible Bilingual Reservation MVP
 
-Greenfield reservation MVP inspired by the Respa/Varaamo reservation flow. The
-API is intentionally new and MVP-native.
+## Overview
+
+Accessible reservation MVP for browsing resources, viewing availability, and
+managing bookings. The product supports Finnish and English as first-class
+languages and uses an MVP-native API.
 
 ## Stack
 
-- Next.js App Router with Finnish and English routes.
+- Next.js App Router for the public, user, staff, and admin UI.
 - Django REST Framework API with app-managed unit staff permissions.
 - authentik OIDC for identity and global admin group claims.
-- PostgreSQL, Docker Compose, Vitest, Playwright, oxlint, Prettier, pytest.
+- PostgreSQL and Docker Compose for local and server environments.
+- Vitest, Playwright, oxlint, Prettier, and pytest for checks.
 
 ## Local Development
 
@@ -20,7 +24,7 @@ docker compose -f compose.dev.yml up --build
 `.env` and other local secret files are intentionally ignored by git. Commit the
 checked-in example files only.
 
-Then open:
+Open the local services:
 
 - Web: http://localhost:3000/fi
 - API docs: http://localhost:8000/api/docs/
@@ -53,17 +57,6 @@ SERVER_ENV_FILE=.env.server.example docker compose --env-file .env.server.exampl
 
 See `AGENTS.md` and `specs/` before making changes.
 
-## First GitHub Push
+## License
 
-```sh
-git init
-git add .
-git status --short
-git commit -m "Initial reservation MVP scaffold"
-git branch -M main
-git remote add origin git@github.com:YOUR_ORG/YOUR_REPO.git
-git push -u origin main
-```
-
-Before pushing, check that `git status --short` does not include `.env`,
-`node_modules`, `.next`, `.venv`, cache directories, or test output.
+Licensed under the [MIT License](LICENSE).

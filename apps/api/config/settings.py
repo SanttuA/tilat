@@ -101,7 +101,7 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Reservation MVP API",
-    "DESCRIPTION": "MVP-native reservation API. This is not Respa-compatible.",
+    "DESCRIPTION": "MVP-native reservation API.",
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }

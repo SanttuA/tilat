@@ -1,0 +1,107 @@
+x-server-env: &server-env
+  - path: ${SERVER_ENV_FILE:-.env.server}
+    required: false
+
+services:
+  db:
+    image: postgres:18.3-alpine
+    env_file: *server-env
+    environment:
+      POSTGRES_DB: reservation
+      POSTGRES_USER: reservation
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace-me}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reservation -d reservation"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - app-db:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      target: server
+    env_file: *server-env
+    command: >
+      sh -c "uv run python manage.py migrate &&
+             uv run gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      target: server
+    env_file: *server-env
+    environment:
+      API_INTERNAL_ORIGIN: http://api:8000/api/v1
+    depends_on:
+      - api
+
+  caddy:
+    image: caddy:2.10-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - web
+      - api
+      - authentik-server
+
+  authentik-postgresql:
+    image: postgres:16-alpine
+    env_file: *server-env
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: ${PG_PASS:?database password required}
+    volumes:
+      - authentik-db:/var/lib/postgresql/data
+
+  authentik-server:
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_TAG:-2026.2.2}
+    command: server
+    env_file: *server-env
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?database password required}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
+    depends_on:
+      - authentik-postgresql
+    volumes:
+      - authentik-media:/media
+      - ./docker/authentik:/blueprints
+
+  authentik-worker:
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_TAG:-2026.2.2}
+    command: worker
+    env_file: *server-env
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?database password required}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
+    depends_on:
+      - authentik-postgresql
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - authentik-media:/media
+      - ./docker/authentik:/blueprints
+
+volumes:
+  app-db:
+  authentik-db:
+  authentik-media:
+  caddy-data:
+  caddy-config:

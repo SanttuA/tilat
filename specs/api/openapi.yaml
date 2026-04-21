@@ -1,0 +1,514 @@
+openapi: 3.1.0
+info:
+  title: Reservation MVP API
+  version: 0.1.0
+  description: MVP-native reservation API. This is not Respa-compatible.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+paths:
+  /resources:
+    get:
+      operationId: listResources
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+      responses:
+        "200":
+          description: Resource page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourcePage"
+  /resources/{id}:
+    get:
+      operationId: getResource
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Resource detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /resources/{id}/availability:
+    get:
+      operationId: getResourceAvailability
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Daily availability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Availability"
+  /me:
+    get:
+      operationId: getMe
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+  /reservations:
+    get:
+      operationId: listOwnReservations
+      responses:
+        "200":
+          description: Own reservations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationPage"
+    post:
+      operationId: createReservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReservationCreate"
+      responses:
+        "201":
+          description: Reservation created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /reservations/{id}/cancel:
+    post:
+      operationId: cancelReservation
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Cancelled reservation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
+  /staff/units:
+    get:
+      operationId: listStaffUnits
+      responses:
+        "200":
+          description: Staff-manageable units
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Unit"
+  /staff/resources:
+    post:
+      operationId: createStaffResource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceWrite"
+      responses:
+        "201":
+          description: Created resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+  /staff/resources/{id}:
+    patch:
+      operationId: updateStaffResource
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceWrite"
+      responses:
+        "200":
+          description: Updated resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+  /staff/reservations:
+    get:
+      operationId: listStaffReservations
+      parameters:
+        - name: unit
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Staff-visible reservations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationPage"
+  /staff/reservations/{id}/approve:
+    post:
+      operationId: approveReservation
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Approved reservation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
+  /staff/reservations/{id}/deny:
+    post:
+      operationId: denyReservation
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Denied reservation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
+  /staff/reservations/{id}/cancel:
+    post:
+      operationId: staffCancelReservation
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Cancelled reservation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
+  /staff/memberships:
+    get:
+      operationId: listStaffMemberships
+      parameters:
+        - name: unit
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Staff memberships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UnitStaffMembership"
+    post:
+      operationId: createStaffMembership
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnitStaffMembershipWrite"
+      responses:
+        "201":
+          description: Created membership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnitStaffMembership"
+  /staff/memberships/{id}:
+    delete:
+      operationId: deleteStaffMembership
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted membership
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Search:
+      name: search
+      in: query
+      schema:
+        type: string
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    LocalizedText:
+      type: object
+      required: [fi, en]
+      properties:
+        fi:
+          type: string
+        en:
+          type: string
+    Error:
+      type: object
+      required: [detail]
+      properties:
+        detail:
+          type: string
+        fields:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+    Unit:
+      type: object
+      required: [id, name, address, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          $ref: "#/components/schemas/LocalizedText"
+        address:
+          $ref: "#/components/schemas/LocalizedText"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Resource:
+      type: object
+      required:
+        [id, unit, name, description, capacity, slotMinutes, requiresApproval, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        unit:
+          $ref: "#/components/schemas/Unit"
+        name:
+          $ref: "#/components/schemas/LocalizedText"
+        description:
+          $ref: "#/components/schemas/LocalizedText"
+        reservationInstructions:
+          $ref: "#/components/schemas/LocalizedText"
+        capacity:
+          type: integer
+          minimum: 1
+        slotMinutes:
+          type: integer
+          enum: [15, 30, 45, 60, 90, 120]
+        requiresApproval:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ResourceWrite:
+      type: object
+      required: [unitId, name, capacity, slotMinutes, requiresApproval]
+      properties:
+        unitId:
+          type: string
+          format: uuid
+        name:
+          $ref: "#/components/schemas/LocalizedText"
+        description:
+          $ref: "#/components/schemas/LocalizedText"
+        reservationInstructions:
+          $ref: "#/components/schemas/LocalizedText"
+        capacity:
+          type: integer
+          minimum: 1
+        slotMinutes:
+          type: integer
+        requiresApproval:
+          type: boolean
+    ResourcePage:
+      type: object
+      required: [count, results]
+      properties:
+        count:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resource"
+    AvailabilitySlot:
+      type: object
+      required: [start, end, available]
+      properties:
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        available:
+          type: boolean
+    Availability:
+      type: object
+      required: [resourceId, date, slots]
+      properties:
+        resourceId:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        slots:
+          type: array
+          items:
+            $ref: "#/components/schemas/AvailabilitySlot"
+    ReservationState:
+      type: string
+      enum: [requested, confirmed, denied, cancelled]
+    Reservation:
+      type: object
+      required: [id, resource, user, begin, end, state, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        resource:
+          $ref: "#/components/schemas/Resource"
+        user:
+          $ref: "#/components/schemas/UserProfile"
+        begin:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        state:
+          $ref: "#/components/schemas/ReservationState"
+        note:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ReservationCreate:
+      type: object
+      required: [resourceId, begin, end]
+      properties:
+        resourceId:
+          type: string
+          format: uuid
+        begin:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        note:
+          type: string
+    ReservationPage:
+      type: object
+      required: [count, results]
+      properties:
+        count:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reservation"
+    UserProfile:
+      type: object
+      required: [id, subject, email, name, isAdmin]
+      properties:
+        id:
+          type: string
+          format: uuid
+        subject:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        isAdmin:
+          type: boolean
+    Me:
+      allOf:
+        - $ref: "#/components/schemas/UserProfile"
+        - type: object
+          required: [staffUnitIds]
+          properties:
+            staffUnitIds:
+              type: array
+              items:
+                type: string
+                format: uuid
+    UnitStaffMembership:
+      type: object
+      required: [id, unit, user, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        unit:
+          $ref: "#/components/schemas/Unit"
+        user:
+          $ref: "#/components/schemas/UserProfile"
+        createdAt:
+          type: string
+          format: date-time
+    UnitStaffMembershipWrite:
+      type: object
+      required: [unitId, userId]
+      properties:
+        unitId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid

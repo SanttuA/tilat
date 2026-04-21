@@ -1,0 +1,84 @@
+{
+  "app": {
+    "name": "Varaustila",
+    "skip": "Siirry sisältöön"
+  },
+  "nav": {
+    "home": "Tilat",
+    "reservations": "Omat varaukset",
+    "staff": "Henkilöstö",
+    "admin": "Ylläpito",
+    "signIn": "Kirjaudu",
+    "signOut": "Kirjaudu ulos"
+  },
+  "language": {
+    "fi": "Suomi",
+    "en": "English"
+  },
+  "resources": {
+    "title": "Varaa tila",
+    "searchLabel": "Hae tiloja",
+    "searchPlaceholder": "Kirjasto, huone tai varuste",
+    "searchButton": "Hae",
+    "results": "Hakutulokset",
+    "capacity": "Henkilömäärä",
+    "requiresApproval": "Vaatii hyväksynnän",
+    "instant": "Vahvistuu heti",
+    "details": "Tiedot",
+    "empty": "Tiloja ei löytynyt."
+  },
+  "resource": {
+    "availability": "Vapaat ajat",
+    "booking": "Tee varaus",
+    "selectSlot": "Valitse aika",
+    "slotMinutes": "Varausjakson pituus minuutteina",
+    "noSlots": "Tälle päivälle ei ole vapaita aikoja."
+  },
+  "booking": {
+    "note": "Viesti henkilöstölle",
+    "submit": "Varaa valittu aika",
+    "success": "Varaus lähetettiin.",
+    "error": "Varausta ei voitu tehdä."
+  },
+  "reservations": {
+    "title": "Omat varaukset",
+    "empty": "Sinulla ei ole varauksia.",
+    "cancel": "Peru varaus"
+  },
+  "state": {
+    "requested": "Odottaa hyväksyntää",
+    "confirmed": "Vahvistettu",
+    "denied": "Hylätty",
+    "cancelled": "Peruttu"
+  },
+  "staff": {
+    "title": "Henkilöstön työtila",
+    "units": "Yksiköt",
+    "reservations": "Varaukset",
+    "resources": "Tilat",
+    "memberships": "Henkilöstöoikeudet",
+    "approve": "Hyväksy",
+    "deny": "Hylkää",
+    "cancel": "Peru",
+    "remove": "Poista",
+    "addMember": "Lisää henkilöstöoikeus",
+    "unit": "Yksikkö",
+    "user": "Käyttäjä",
+    "userId": "Käyttäjän tunniste",
+    "resourceNameFi": "Tilan nimi suomeksi",
+    "resourceNameEn": "Tilan nimi englanniksi",
+    "save": "Tallenna"
+  },
+  "admin": {
+    "title": "Ylläpidon yleisnäkymä"
+  },
+  "common": {
+    "loading": "Ladataan",
+    "error": "Tapahtui virhe",
+    "required": "Pakollinen kenttä",
+    "actions": "Toiminnot",
+    "date": "Päivä",
+    "time": "Aika",
+    "status": "Tila"
+  }
+}

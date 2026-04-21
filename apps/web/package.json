@@ -1,0 +1,44 @@
+{
+  "name": "@reservation/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0 --port 3000",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0 --port 3000",
+    "lint": "oxlint .",
+    "test": "vitest run",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@reservation/api-client": "workspace:*",
+    "clsx": "2.1.1",
+    "lucide-react": "1.8.0",
+    "next": "16.2.4",
+    "next-auth": "4.24.14",
+    "next-intl": "4.9.1",
+    "openapi-fetch": "0.17.0",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "tailwindcss": "4.2.2",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.2",
+    "@playwright/test": "1.59.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "24.12.2",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "axe-core": "4.11.3",
+    "jsdom": "29.0.2",
+    "oxlint": "1.60.0",
+    "prettier": "3.8.3",
+    "typescript": "6.0.3",
+    "vite": "8.0.9",
+    "vitest": "4.1.4"
+  }
+}

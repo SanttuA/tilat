@@ -1,0 +1,69 @@
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Local agent and scratch state
+.codex
+.codex/
+.tmp/
+tmp/
+temp/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.dev.example
+!.env.server.example
+.envrc
+
+# JavaScript / TypeScript
+node_modules/
+.pnpm-store/
+.turbo/
+.next/
+out/
+dist/
+build/
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.hypothesis/
+.tox/
+.nox/
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
+
+# Django and app runtime files
+staticfiles/
+media/
+*.sqlite3
+db.sqlite3
+
+# Local Docker/runtime data
+data/
+docker-data/
+
+# Generated temporary artifacts
+tmp-openapi.yaml

@@ -1,0 +1,84 @@
+{
+  "app": {
+    "name": "Reservation Space",
+    "skip": "Skip to content"
+  },
+  "nav": {
+    "home": "Resources",
+    "reservations": "My reservations",
+    "staff": "Staff",
+    "admin": "Admin",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "language": {
+    "fi": "Suomi",
+    "en": "English"
+  },
+  "resources": {
+    "title": "Reserve a space",
+    "searchLabel": "Search resources",
+    "searchPlaceholder": "Library, room, or equipment",
+    "searchButton": "Search",
+    "results": "Search results",
+    "capacity": "Capacity",
+    "requiresApproval": "Requires approval",
+    "instant": "Instant confirmation",
+    "details": "Details",
+    "empty": "No resources found."
+  },
+  "resource": {
+    "availability": "Available times",
+    "booking": "Make a reservation",
+    "selectSlot": "Choose a time",
+    "slotMinutes": "Slot length in minutes",
+    "noSlots": "There are no available times for this date."
+  },
+  "booking": {
+    "note": "Message to staff",
+    "submit": "Reserve selected time",
+    "success": "Reservation submitted.",
+    "error": "Reservation could not be created."
+  },
+  "reservations": {
+    "title": "My reservations",
+    "empty": "You have no reservations.",
+    "cancel": "Cancel reservation"
+  },
+  "state": {
+    "requested": "Awaiting approval",
+    "confirmed": "Confirmed",
+    "denied": "Denied",
+    "cancelled": "Cancelled"
+  },
+  "staff": {
+    "title": "Staff workspace",
+    "units": "Units",
+    "reservations": "Reservations",
+    "resources": "Resources",
+    "memberships": "Staff permissions",
+    "approve": "Approve",
+    "deny": "Deny",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "addMember": "Add staff permission",
+    "unit": "Unit",
+    "user": "User",
+    "userId": "User ID",
+    "resourceNameFi": "Resource name in Finnish",
+    "resourceNameEn": "Resource name in English",
+    "save": "Save"
+  },
+  "admin": {
+    "title": "Admin overview"
+  },
+  "common": {
+    "loading": "Loading",
+    "error": "Something went wrong",
+    "required": "Required field",
+    "actions": "Actions",
+    "date": "Date",
+    "time": "Time",
+    "status": "Status"
+  }
+}

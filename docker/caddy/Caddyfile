@@ -1,0 +1,19 @@
+{
+	email off
+}
+
+:80 {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+
+	handle_path /auth/* {
+		reverse_proxy authentik-server:9000
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}

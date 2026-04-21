@@ -1,0 +1,81 @@
+name: Master PR CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: master-pr-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check generated API client
+        run: |
+          pnpm generate:api-client
+          git diff --exit-code -- packages/api-client/src/schema.d.ts
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: pnpm e2e
+        env:
+          PLAYWRIGHT_WEB_COMMAND: pnpm dev
+          NEXTAUTH_URL: http://127.0.0.1:3000
+          NEXTAUTH_SECRET: ci-nextauth-secret
+
+  api:
+    name: API
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+
+      - name: Test API
+        run: uv run pytest
+        working-directory: apps/api
+
+      - name: Validate generated OpenAPI schema
+        run: uv run python manage.py spectacular --file ../../tmp-openapi.yaml --validate
+        working-directory: apps/api

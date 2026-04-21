@@ -2,12 +2,16 @@ from django.db import migrations
 
 
 def use_email_usernames(apps, schema_editor):
+    User = apps.get_model("auth", "User")
     UserProfile = apps.get_model("reservations", "UserProfile")
+    username_max_length = User._meta.get_field("username").max_length
 
     for profile in UserProfile.objects.select_related("user"):
         user = profile.user
         email = (user.email or "").strip().lower()
         if not email:
+            continue
+        if username_max_length is not None and len(email) > username_max_length:
             continue
         if user.username == email:
             continue

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from importlib import import_module
 from unittest.mock import patch
 
 import pytest
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.utils import timezone
@@ -11,6 +13,13 @@ from rest_framework.test import APIClient
 
 from reservations.auth import hash_access_token
 from reservations.models import UserAccessToken, UserProfile
+
+
+def email_longer_than_username_limit() -> str:
+    email = f"user@{'a' * 63}.{'b' * 63}.{'c' * 18}.com"
+    username_limit = get_user_model()._meta.get_field("username").max_length
+    assert len(email) > username_limit
+    return email
 
 
 @pytest.mark.django_db
@@ -58,6 +67,23 @@ def test_signup_rejects_duplicate_email(profile_factory):
 
 
 @pytest.mark.django_db
+def test_signup_rejects_email_longer_than_username_limit():
+    email = email_longer_than_username_limit()
+    username_limit = get_user_model()._meta.get_field("username").max_length
+    client = APIClient()
+
+    response = client.post(
+        "/api/v1/auth/signup",
+        {"email": email, "name": "Long Email", "password": "Local-test-12345"},
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert response.data == {"email": [f"Email must be {username_limit} characters or fewer."]}
+    assert not get_user_model().objects.filter(email=email).exists()
+
+
+@pytest.mark.django_db
 def test_signup_rejects_email_that_matches_existing_username():
     get_user_model().objects.create_user(
         username="duplicate@example.com",
@@ -90,6 +116,25 @@ def test_signup_converts_unique_username_race_to_validation_error():
     assert response.status_code == 400
     assert response.data == {"email": ["A user with this email already exists."]}
     assert not UserProfile.objects.filter(user__email="race@example.com").exists()
+
+
+@pytest.mark.django_db
+def test_use_email_usernames_migration_skips_overlong_email_username():
+    User = get_user_model()
+    email = email_longer_than_username_limit()
+    user = User.objects.create_user(
+        username="legacy-long-email",
+        email=email,
+        password="Local-test-12345",
+    )
+    UserProfile.objects.create(user=user, name="Legacy Long Email")
+    migration = import_module("reservations.migrations.0005_use_email_usernames")
+
+    migration.use_email_usernames(apps, None)
+
+    user.refresh_from_db()
+    assert user.username == "legacy-long-email"
+    assert user.email == email
 
 
 @pytest.mark.django_db

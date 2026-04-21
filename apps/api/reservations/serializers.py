@@ -24,6 +24,13 @@ def normalize_email(value: str) -> str:
     return value.strip().lower()
 
 
+def username_max_length() -> int | None:
+    return get_user_model()._meta.get_field("username").max_length
+
+
+SIGNUP_EMAIL_MAX_LENGTH = username_max_length()
+
+
 class LocalizedTextField(serializers.JSONField):
     def __init__(self, *args, require_all: bool = False, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -50,12 +57,18 @@ class AuthSessionSerializer(serializers.Serializer):
 
 
 class SignupSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    email = serializers.EmailField(
+        max_length=SIGNUP_EMAIL_MAX_LENGTH,
+        error_messages={"max_length": f"Email must be {SIGNUP_EMAIL_MAX_LENGTH} characters or fewer."},
+    )
     name = serializers.CharField(max_length=255, allow_blank=False, trim_whitespace=True)
     password = serializers.CharField(write_only=True, trim_whitespace=False)
 
     def validate_email(self, value: str) -> str:
         email = normalize_email(value)
+        max_length = username_max_length()
+        if max_length is not None and len(email) > max_length:
+            raise serializers.ValidationError(f"Email must be {max_length} characters or fewer.")
         if get_user_model().objects.filter(Q(email__iexact=email) | Q(username__iexact=email)).exists():
             raise serializers.ValidationError("A user with this email already exists.")
         return email

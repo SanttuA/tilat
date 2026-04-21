@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 from rest_framework import serializers
 
@@ -70,12 +71,18 @@ class SignupSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         User = get_user_model()
-        user = User.objects.create_user(
-            username=validated_data["email"],
-            email=validated_data["email"],
-            password=validated_data["password"],
-        )
-        profile = UserProfile.objects.create(user=user, name=validated_data["name"], is_admin=False)
+        try:
+            with transaction.atomic():
+                user = User.objects.create_user(
+                    username=validated_data["email"],
+                    email=validated_data["email"],
+                    password=validated_data["password"],
+                )
+                profile = UserProfile.objects.create(user=user, name=validated_data["name"], is_admin=False)
+        except IntegrityError as exc:
+            raise serializers.ValidationError(
+                {"email": ["A user with this email already exists."]},
+            ) from exc
         token, _ = create_access_token(profile)
         return {"token": token, "user": profile}
 

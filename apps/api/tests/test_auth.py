@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from unittest.mock import patch
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.utils import timezone
 from rest_framework.test import APIClient
 
@@ -72,6 +74,22 @@ def test_signup_rejects_email_that_matches_existing_username():
 
     assert response.status_code == 400
     assert "email" in response.data
+
+
+@pytest.mark.django_db
+def test_signup_converts_unique_username_race_to_validation_error():
+    client = APIClient()
+
+    with patch.object(get_user_model().objects, "create_user", side_effect=IntegrityError("duplicate username")):
+        response = client.post(
+            "/api/v1/auth/signup",
+            {"email": "race@example.com", "name": "Race User", "password": "Local-test-12345"},
+            format="json",
+        )
+
+    assert response.status_code == 400
+    assert response.data == {"email": ["A user with this email already exists."]}
+    assert not UserProfile.objects.filter(user__email="race@example.com").exists()
 
 
 @pytest.mark.django_db

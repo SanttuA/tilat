@@ -140,7 +140,7 @@ class ReservationListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Reservation.objects.none()
-        return Reservation.objects.filter(user=self.request.user).select_related("resource__unit", "user")
+        return Reservation.objects.filter(user=self.request.user).select_related("resource__unit", "user__user")
 
     def perform_create(self, serializer):
         reservation = serializer.save()
@@ -221,7 +221,7 @@ class StaffReservationListView(generics.ListAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Reservation.objects.none()
-        queryset = Reservation.objects.select_related("resource__unit", "user")
+        queryset = Reservation.objects.select_related("resource__unit", "user__user")
         if not is_admin(self.request.user):
             queryset = queryset.filter(resource__unit_id__in=staff_unit_ids(self.request.user))
         unit_id = self.request.query_params.get("unit")
@@ -261,7 +261,7 @@ class StaffMembershipListCreateView(generics.ListCreateAPIView):
         return UnitStaffMembershipSerializer
 
     def get_queryset(self):
-        queryset = UnitStaffMembership.objects.select_related("unit", "user")
+        queryset = UnitStaffMembership.objects.select_related("unit", "user__user")
         if not is_admin(self.request.user):
             queryset = queryset.filter(unit_id__in=staff_unit_ids(self.request.user))
         unit_id = self.request.query_params.get("unit")
@@ -287,7 +287,7 @@ class StaffMembershipListCreateView(generics.ListCreateAPIView):
 class StaffMembershipDeleteView(generics.DestroyAPIView):
     permission_classes = [IsStaffOrAdmin]
     serializer_class = UnitStaffMembershipSerializer
-    queryset = UnitStaffMembership.objects.select_related("unit", "user")
+    queryset = UnitStaffMembership.objects.select_related("unit", "user__user")
 
     def delete(self, request, *args, **kwargs):
         membership = self.get_object()

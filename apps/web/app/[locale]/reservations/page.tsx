@@ -1,8 +1,8 @@
 import { StatusBadge } from "@/components/StatusBadge";
 import { cancelOwnReservationAction } from "@/app/[locale]/actions";
-import { listOwnReservations } from "@/lib/api";
 import { getAccessToken } from "@/lib/auth";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
+import { listOwnReservationsForValidSession } from "@/lib/reservations";
 import { redirect } from "next/navigation";
 
 export default async function ReservationsPage({
@@ -14,10 +14,10 @@ export default async function ReservationsPage({
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "fi";
   const messages = getMessages(locale);
   const token = await getAccessToken();
-  if (!token) {
+  const reservations = await listOwnReservationsForValidSession(token);
+  if (!reservations) {
     redirect(`/${locale}/sign-in?next=/${locale}/reservations`);
   }
-  const reservations = await listOwnReservations(token);
 
   return (
     <>

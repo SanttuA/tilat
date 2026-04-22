@@ -45,7 +45,12 @@ class ProfileTokenAuthentication(authentication.BaseAuthentication):
         token_hash = hash_access_token(token)
         access_token = (
             UserAccessToken.objects.select_related("user_profile__user")
-            .filter(token_hash=token_hash, revoked_at__isnull=True, expires_at__gt=timezone.now())
+            .filter(
+                token_hash=token_hash,
+                revoked_at__isnull=True,
+                expires_at__gt=timezone.now(),
+                user_profile__user__is_active=True,
+            )
             .first()
         )
         if not access_token:

@@ -259,6 +259,28 @@ def test_revoked_and_expired_tokens_fail(profile_factory):
 
 
 @pytest.mark.django_db
+def test_token_for_deactivated_user_fails(profile_factory):
+    profile = profile_factory(email="user@example.com")
+    token = (
+        APIClient()
+        .post(
+            "/api/v1/auth/signin",
+            {"email": "user@example.com", "password": "Local-test-12345"},
+            format="json",
+        )
+        .data["token"]
+    )
+    profile.user.is_active = False
+    profile.user.save(update_fields=["is_active"])
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+    response = client.get("/api/v1/me")
+
+    assert response.status_code == 401
+
+
+@pytest.mark.django_db
 def test_signout_revokes_only_current_token(profile_factory):
     profile_factory(email="user@example.com")
     first = (

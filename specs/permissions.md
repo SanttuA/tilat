@@ -3,6 +3,8 @@
 Identity is owned by this application using Django-managed email/password users.
 Global app admin and unit staff assignments live in this application and are
 assigned through the backend.
+Only active Django users can authenticate; deactivating a user blocks both
+signin and any already-issued bearer tokens.
 
 ## Roles
 

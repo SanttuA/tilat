@@ -11,6 +11,17 @@ DEBUG = os.getenv("DJANGO_DEBUG", "true").lower() == "true"
 ALLOWED_HOSTS = [host for host in os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",") if host]
 
 
+def positive_int_from_env(name: str, default: str) -> int:
+    raw_value = os.getenv(name, default)
+    try:
+        value = int(raw_value)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a positive integer.") from exc
+    if value < 1:
+        raise ValueError(f"{name} must be a positive integer.")
+    return value
+
+
 def database_from_url(url: str | None) -> dict[str, object]:
     if not url:
         return {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
@@ -106,4 +117,4 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-PASSWORD_AUTH_TOKEN_TTL_DAYS = int(os.getenv("PASSWORD_AUTH_TOKEN_TTL_DAYS", "30"))
+PASSWORD_AUTH_TOKEN_TTL_DAYS = positive_int_from_env("PASSWORD_AUTH_TOKEN_TTL_DAYS", "30")

@@ -5,6 +5,7 @@ import { createReservationAction } from "@/app/[locale]/actions";
 import { getAvailability, getResource } from "@/lib/api";
 import { getAccessToken } from "@/lib/auth";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
+import { hasValidSession } from "@/lib/session";
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -24,6 +25,7 @@ export default async function ResourceDetailPage({
   const resource = await getResource(id);
   const availability = await getAvailability(id, date);
   const accessToken = await getAccessToken();
+  const canBook = await hasValidSession(accessToken);
 
   return (
     <>
@@ -54,7 +56,7 @@ export default async function ResourceDetailPage({
           </button>
         </form>
       </section>
-      {accessToken ? (
+      {canBook ? (
         <BookingForm
           action={createReservationAction}
           availability={availability}

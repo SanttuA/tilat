@@ -5,6 +5,8 @@ Global app admin and unit staff assignments live in this application and are
 assigned through the backend.
 Only active Django users can authenticate; deactivating a user blocks both
 signin and any already-issued bearer tokens.
+Password auth tokens expire after `PASSWORD_AUTH_TOKEN_TTL_DAYS` days, and the
+web auth cookie lifetime must use the same value.
 
 ## Roles
 

@@ -46,7 +46,7 @@ class ResourceAdmin(admin.ModelAdmin):
 class ReservationAdmin(admin.ModelAdmin):
     list_display = ("id", "resource", "user", "begin", "end", "state")
     list_filter = ("state", "resource__unit")
-    search_fields = ("user__email", "user__name", "resource__name")
+    search_fields = ("user__user__email", "user__name", "resource__name")
 
 
 @admin.register(UnitStaffMembership)

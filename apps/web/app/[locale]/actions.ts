@@ -74,10 +74,15 @@ export async function signUpAction(_state: FormState, formData: FormData): Promi
 export async function signOutAction(formData: FormData): Promise<void> {
   const locale = formLocale(formData);
   const accessToken = await getAccessToken();
-  if (accessToken) {
-    await signOut(accessToken);
+  try {
+    if (accessToken) {
+      await signOut(accessToken);
+    }
+  } catch {
+    // Local signout must still complete if the API is restarting or unavailable.
+  } finally {
+    await clearAccessToken();
   }
-  await clearAccessToken();
   redirect(`/${locale}`);
 }
 

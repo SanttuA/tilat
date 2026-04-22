@@ -9,6 +9,8 @@ Password auth tokens expire after `PASSWORD_AUTH_TOKEN_TTL_DAYS` days, and the
 web auth cookie lifetime must use the same positive integer value.
 Protected web pages must validate the bearer token through the identity endpoint
 before rendering protected user data.
+Signout must clear the local web auth cookie even when backend token revocation
+is temporarily unavailable.
 
 ## Roles
 

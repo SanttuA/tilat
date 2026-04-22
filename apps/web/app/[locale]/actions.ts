@@ -14,6 +14,7 @@ import {
   signUp,
   staffReservationAction,
 } from "@/lib/api";
+import { signupErrorMessage } from "@/lib/api-errors";
 import { clearAccessToken, getAccessToken, setAccessToken } from "@/lib/auth";
 import { getMessages, isLocale, t, type Locale } from "@/lib/i18n";
 
@@ -64,7 +65,7 @@ export async function signUpAction(_state: FormState, formData: FormData): Promi
 
   const { data, error } = await signUp({ email, name, password });
   if (error || !data) {
-    return { status: "error", message: t(messages, "auth.signupFailed") };
+    return { status: "error", message: signupErrorMessage(messages, error) };
   }
 
   await setAccessToken(data.token);

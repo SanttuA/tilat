@@ -46,7 +46,6 @@ export function demoAvailability(
 
 export const demoUser: components["schemas"]["Me"] = {
   id: "33333333-3333-4333-8333-333333333333",
-  subject: "demo-user",
   email: "user@example.com",
   name: "Demo User",
   isAdmin: false,
@@ -56,7 +55,6 @@ export const demoUser: components["schemas"]["Me"] = {
 export const demoStaff: components["schemas"]["Me"] = {
   ...demoUser,
   id: "44444444-4444-4444-8444-444444444444",
-  subject: "demo-staff",
   email: "staff@example.com",
   name: "Demo Staff",
   staffUnitIds: [demoUnit.id],

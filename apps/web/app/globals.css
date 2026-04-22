@@ -108,6 +108,10 @@ a {
   gap: 0.5rem;
 }
 
+.nav form {
+  margin: 0;
+}
+
 .nav a,
 .nav button,
 .button,
@@ -226,6 +230,11 @@ textarea {
   display: grid;
   gap: 0.75rem;
   padding: 1rem;
+}
+
+.auth-card {
+  max-width: 32rem;
+  width: 100%;
 }
 
 .meta {

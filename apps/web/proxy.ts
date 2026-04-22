@@ -6,12 +6,7 @@ const publicFile = /\.(.*)$/;
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (
-    pathname.startsWith("/api") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/auth") ||
-    publicFile.test(pathname)
-  ) {
+  if (pathname.startsWith("/api") || pathname.startsWith("/_next") || publicFile.test(pathname)) {
     return NextResponse.next();
   }
 

@@ -10,7 +10,7 @@ languages and uses an MVP-native API.
 
 - Next.js App Router for the public, user, staff, and admin UI.
 - Django REST Framework API with app-managed unit staff permissions.
-- authentik OIDC for identity and global admin group claims.
+- Django-managed email/password signup and signin.
 - PostgreSQL and Docker Compose for local and server environments.
 - Vitest, Playwright, oxlint, Prettier, and pytest for checks.
 
@@ -28,11 +28,19 @@ Open the local services:
 
 - Web: http://localhost:3000/fi
 - API docs: http://localhost:8000/api/docs/
-- authentik: http://localhost:9000/if/flow/initial-setup/
 
-The Django seed command creates bilingual demo units/resources and local
-profiles. authentik still needs the OIDC application/provider from the blueprint
-or the same values entered manually if blueprint import is not available.
+The Django seed command creates bilingual demo units/resources and local demo
+accounts. All demo accounts use the password `Local-demo-12345`:
+
+- Admin and Django admin fallback: `admin@example.com`
+- Unit staff: `staff@example.com`
+- Normal user: `user@example.com`
+
+Django admin uses the same email value in its Username field. Only users with
+Django staff access, such as the seeded admin, can sign in at `/admin/`.
+
+`PASSWORD_AUTH_TOKEN_TTL_DAYS` controls both backend access token expiry and the
+web HttpOnly auth cookie lifetime.
 
 ## Server Compose
 
@@ -41,8 +49,8 @@ cp .env.server.example .env.server
 docker compose --env-file .env.server -f compose.server.yml up --build
 ```
 
-Replace every `replace-me` value before exposing the stack. Caddy fronts `/`,
-`/api`, and `/auth`; Django migrations run before gunicorn starts.
+Replace every `replace-me` value before exposing the stack. Caddy fronts `/` and
+`/api`; Django migrations run before gunicorn starts.
 
 ## Checks
 

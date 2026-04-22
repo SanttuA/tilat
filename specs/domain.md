@@ -16,7 +16,7 @@ language and display with Finnish fallback.
 
 ## Entities
 
-- `UserProfile`: local projection of an OIDC user, keyed by subject.
+- `UserProfile`: reservation-domain profile linked to a Django password user.
 - `Unit`: a location or organization that owns resources.
 - `Resource`: a reservable room, equipment item, or service.
 - `OpeningHours`: weekly opening interval for a resource.

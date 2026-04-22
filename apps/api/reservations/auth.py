@@ -1,16 +1,32 @@
 from __future__ import annotations
 
-from typing import Any
+import hashlib
+import secrets
+from datetime import timedelta
 
-import jwt
 from django.conf import settings
-from jwt import PyJWKClient
+from django.utils import timezone
 from rest_framework import authentication, exceptions
 
-from .models import UserProfile
+from .models import UserAccessToken, UserProfile
 
 
-class OIDCBearerAuthentication(authentication.BaseAuthentication):
+def hash_access_token(token: str) -> str:
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
+def create_access_token(profile: UserProfile) -> tuple[str, UserAccessToken]:
+    token = secrets.token_urlsafe(32)
+    expires_at = timezone.now() + timedelta(days=settings.PASSWORD_AUTH_TOKEN_TTL_DAYS)
+    access_token = UserAccessToken.objects.create(
+        user_profile=profile,
+        token_hash=hash_access_token(token),
+        expires_at=expires_at,
+    )
+    return token, access_token
+
+
+class ProfileTokenAuthentication(authentication.BaseAuthentication):
     keyword = "Bearer"
 
     def authenticate(self, request):
@@ -26,59 +42,22 @@ class OIDCBearerAuthentication(authentication.BaseAuthentication):
         if keyword != self.keyword:
             return None
 
-        claims = self._decode_token(token)
-        profile = self._profile_from_claims(claims)
-        request.oidc_claims = claims
-        request.oidc_groups = claims.get("groups", [])
-        return (profile, token)
-
-    def _decode_token(self, token: str) -> dict[str, Any]:
-        if settings.DEBUG and token.startswith("dev."):
-            return self._decode_dev_token(token)
-
-        if not settings.OIDC_ISSUER:
-            raise exceptions.AuthenticationFailed("OIDC issuer is not configured.")
-
-        jwks_url = f"{settings.OIDC_ISSUER.rstrip('/')}/.well-known/jwks.json"
-        jwk_client = PyJWKClient(jwks_url)
-        signing_key = jwk_client.get_signing_key_from_jwt(token)
-        try:
-            return jwt.decode(
-                token,
-                signing_key.key,
-                algorithms=["RS256", "ES256"],
-                audience=settings.OIDC_AUDIENCE,
-                issuer=settings.OIDC_ISSUER.rstrip("/"),
+        token_hash = hash_access_token(token)
+        access_token = (
+            UserAccessToken.objects.select_related("user_profile__user")
+            .filter(
+                token_hash=token_hash,
+                revoked_at__isnull=True,
+                expires_at__gt=timezone.now(),
+                user_profile__user__is_active=True,
             )
-        except jwt.PyJWTError as exc:
-            raise exceptions.AuthenticationFailed("Invalid access token.") from exc
-
-    def _decode_dev_token(self, token: str) -> dict[str, Any]:
-        # Local-only escape hatch for tests and seed demos when authentik is not running.
-        # Format: dev.subject.email.name.group1,group2
-        parts = token.split(".", 4)
-        if len(parts) != 5:
-            raise exceptions.AuthenticationFailed("Invalid dev token.")
-        _, subject, email, name, groups = parts
-        return {
-            "sub": subject,
-            "email": email,
-            "name": name.replace("_", " "),
-            "groups": [group for group in groups.split(",") if group],
-        }
-
-    def _profile_from_claims(self, claims: dict[str, Any]) -> UserProfile:
-        subject = claims.get("sub")
-        if not subject:
-            raise exceptions.AuthenticationFailed("Token is missing subject.")
-
-        groups = claims.get("groups", [])
-        profile, _ = UserProfile.objects.update_or_create(
-            subject=subject,
-            defaults={
-                "email": claims.get("email") or f"{subject}@example.invalid",
-                "name": claims.get("name") or claims.get("preferred_username") or subject,
-                "is_admin_claim": settings.OIDC_ADMIN_GROUP in groups,
-            },
+            .first()
         )
-        return profile
+        if not access_token:
+            raise exceptions.AuthenticationFailed("Invalid access token.")
+
+        UserAccessToken.objects.filter(pk=access_token.pk).update(last_used_at=timezone.now())
+        return (access_token.user_profile, access_token)
+
+    def authenticate_header(self, request) -> str:
+        return self.keyword

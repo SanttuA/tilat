@@ -1,6 +1,8 @@
+import { redirect } from "next/navigation";
+
 import { createStaffMembershipAction, deleteStaffMembershipAction } from "@/app/[locale]/actions";
 import { getAccessToken } from "@/lib/auth";
-import { listStaffMemberships, listStaffUnits } from "@/lib/api";
+import { getMe, listStaffMemberships, listStaffUnits } from "@/lib/api";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
 
 export default async function StaffMembershipsPage({
@@ -12,6 +14,26 @@ export default async function StaffMembershipsPage({
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "fi";
   const messages = getMessages(locale);
   const token = await getAccessToken();
+  if (!token) {
+    redirect(`/${locale}/sign-in?next=/${locale}/staff/memberships`);
+  }
+  const me = await getMe(token);
+  if (!me) {
+    redirect(`/${locale}/sign-in?next=/${locale}/staff/memberships`);
+  }
+  if (!me.isAdmin && me.staffUnitIds.length === 0) {
+    return (
+      <>
+        <section className="hero" aria-labelledby="page-title">
+          <h1 id="page-title">{t(messages, "staff.memberships")}</h1>
+        </section>
+        <section className="card" aria-labelledby="unauthorized-title">
+          <h2 id="unauthorized-title">{t(messages, "auth.unauthorizedTitle")}</h2>
+          <p>{t(messages, "auth.staffUnauthorized")}</p>
+        </section>
+      </>
+    );
+  }
   const [units, memberships] = await Promise.all([
     listStaffUnits(token),
     listStaffMemberships(token),

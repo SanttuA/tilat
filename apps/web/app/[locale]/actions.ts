@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import {
   cancelReservation,
@@ -8,10 +9,14 @@ import {
   createStaffMembership,
   createStaffResource,
   deleteStaffMembership,
+  signIn,
+  signOut,
+  signUp,
   staffReservationAction,
 } from "@/lib/api";
-import { getAccessToken } from "@/lib/auth";
-import { isLocale } from "@/lib/i18n";
+import { signupErrorMessage } from "@/lib/api-errors";
+import { clearAccessToken, getAccessToken, setAccessToken } from "@/lib/auth";
+import { getMessages, isLocale, t, type Locale } from "@/lib/i18n";
 
 export type FormState = {
   status: "idle" | "success" | "error";
@@ -23,13 +28,74 @@ function localePath(formData: FormData, suffix: string): string {
   return `/${isLocale(locale) ? locale : "fi"}${suffix}`;
 }
 
+function formLocale(formData: FormData): Locale {
+  const locale = String(formData.get("locale") ?? "fi");
+  return isLocale(locale) ? locale : "fi";
+}
+
+function safeNextPath(formData: FormData, locale: Locale, fallback: string): string {
+  const next = String(formData.get("next") ?? "");
+  if (next.startsWith(`/${locale}/`) || next === `/${locale}`) {
+    return next;
+  }
+  return `/${locale}${fallback}`;
+}
+
+export async function signInAction(_state: FormState, formData: FormData): Promise<FormState> {
+  const locale = formLocale(formData);
+  const messages = getMessages(locale);
+  const email = String(formData.get("email") ?? "");
+  const password = String(formData.get("password") ?? "");
+
+  const { data, error } = await signIn({ email, password });
+  if (error || !data) {
+    return { status: "error", message: t(messages, "auth.invalidCredentials") };
+  }
+
+  await setAccessToken(data.token);
+  redirect(safeNextPath(formData, locale, "/reservations"));
+}
+
+export async function signUpAction(_state: FormState, formData: FormData): Promise<FormState> {
+  const locale = formLocale(formData);
+  const messages = getMessages(locale);
+  const email = String(formData.get("email") ?? "");
+  const name = String(formData.get("name") ?? "");
+  const password = String(formData.get("password") ?? "");
+
+  const { data, error } = await signUp({ email, name, password });
+  if (error || !data) {
+    return { status: "error", message: signupErrorMessage(messages, error) };
+  }
+
+  await setAccessToken(data.token);
+  redirect(`/${locale}/reservations`);
+}
+
+export async function signOutAction(formData: FormData): Promise<void> {
+  const locale = formLocale(formData);
+  const accessToken = await getAccessToken();
+  try {
+    if (accessToken) {
+      await signOut(accessToken);
+    }
+  } catch {
+    // Local signout must still complete if the API is restarting or unavailable.
+  } finally {
+    await clearAccessToken();
+  }
+  redirect(`/${locale}`);
+}
+
 export async function createReservationAction(
   _state: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  const locale = formLocale(formData);
+  const messages = getMessages(locale);
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    return { status: "error", message: "Authentication required." };
+    return { status: "error", message: t(messages, "auth.required") };
   }
 
   const slot = String(formData.get("slot") ?? "");
@@ -38,16 +104,16 @@ export async function createReservationAction(
   const note = String(formData.get("note") ?? "");
 
   if (!begin || !end || !resourceId) {
-    return { status: "error", message: "Required reservation details are missing." };
+    return { status: "error", message: t(messages, "booking.missingDetails") };
   }
 
   const { error } = await createReservation(accessToken, { resourceId, begin, end, note });
   if (error) {
-    return { status: "error", message: "Reservation could not be created." };
+    return { status: "error", message: t(messages, "booking.error") };
   }
 
   revalidatePath("/[locale]/reservations", "page");
-  return { status: "success", message: "Reservation submitted." };
+  return { status: "success", message: t(messages, "booking.success") };
 }
 
 export async function reservationStaffAction(formData: FormData): Promise<void> {

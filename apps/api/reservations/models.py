@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import uuid
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 
 
 def empty_localized_text() -> dict[str, str]:
@@ -36,10 +38,17 @@ class TimestampedUUIDModel(models.Model):
 
 
 class UserProfile(TimestampedUUIDModel):
-    subject = models.CharField(max_length=255, unique=True)
-    email = models.EmailField()
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        related_name="reservation_profile",
+        on_delete=models.CASCADE,
+    )
     name = models.CharField(max_length=255)
-    is_admin_claim = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+
+    @property
+    def email(self) -> str:
+        return self.user.email
 
     @property
     def is_authenticated(self) -> bool:
@@ -51,6 +60,28 @@ class UserProfile(TimestampedUUIDModel):
 
     def __str__(self) -> str:
         return f"{self.name} <{self.email}>"
+
+
+class UserAccessToken(TimestampedUUIDModel):
+    user_profile = models.ForeignKey(UserProfile, related_name="access_tokens", on_delete=models.CASCADE)
+    token_hash = models.CharField(max_length=64, unique=True)
+    expires_at = models.DateTimeField()
+    revoked_at = models.DateTimeField(null=True, blank=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["token_hash"]),
+            models.Index(fields=["expires_at"]),
+            models.Index(fields=["revoked_at"]),
+        ]
+
+    @property
+    def is_active(self) -> bool:
+        return self.revoked_at is None and self.expires_at > timezone.now()
+
+    def __str__(self) -> str:
+        return f"access token for {self.user_profile}"
 
 
 class Unit(TimestampedUUIDModel):

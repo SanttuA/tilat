@@ -1,7 +1,16 @@
 # Permissions
 
-authentik provides identity and a global `reservation-admins` group claim. Unit
-staff assignments live in this application.
+Identity is owned by this application using Django-managed email/password users.
+Global app admin and unit staff assignments live in this application and are
+assigned through the backend.
+Only active Django users can authenticate; deactivating a user blocks both
+signin and any already-issued bearer tokens.
+Password auth tokens expire after `PASSWORD_AUTH_TOKEN_TTL_DAYS` days, and the
+web auth cookie lifetime must use the same positive integer value.
+Protected web pages must validate the bearer token through the identity endpoint
+before rendering protected user data.
+Signout must clear the local web auth cookie even when backend token revocation
+is temporarily unavailable.
 
 ## Roles
 
@@ -24,4 +33,5 @@ Unit staff cannot:
 ## Admin
 
 Admins can manage all units, resources, reservations, users, and staff
-memberships. Admin status comes only from authentik group claims.
+memberships. Admin status is an app-owned profile flag assigned through Django
+admin or backend maintenance workflows.

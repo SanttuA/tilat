@@ -9,6 +9,7 @@
     "staff": "Henkilöstö",
     "admin": "Ylläpito",
     "signIn": "Kirjaudu",
+    "signUp": "Rekisteröidy",
     "signOut": "Kirjaudu ulos"
   },
   "language": {
@@ -38,7 +39,8 @@
     "note": "Viesti henkilöstölle",
     "submit": "Varaa valittu aika",
     "success": "Varaus lähetettiin.",
-    "error": "Varausta ei voitu tehdä."
+    "error": "Varausta ei voitu tehdä.",
+    "missingDetails": "Varauksen pakollisia tietoja puuttuu."
   },
   "reservations": {
     "title": "Omat varaukset",
@@ -71,6 +73,27 @@
   },
   "admin": {
     "title": "Ylläpidon yleisnäkymä"
+  },
+  "auth": {
+    "signInTitle": "Kirjaudu",
+    "signUpTitle": "Luo tili",
+    "email": "Sähköpostiosoite",
+    "name": "Nimi",
+    "password": "Salasana",
+    "signInSubmit": "Kirjaudu",
+    "signUpSubmit": "Rekisteröidy",
+    "needAccount": "Luo tili",
+    "haveAccount": "Kirjaudu olemassa olevalla tilillä",
+    "invalidCredentials": "Tarkista sähköpostiosoite ja salasana.",
+    "signupFailed": "Tiliä ei voitu luoda.",
+    "emailAlreadyExists": "Tällä sähköpostiosoitteella on jo tili. Kirjaudu sisään tai käytä toista osoitetta.",
+    "emailInvalid": "Tarkista sähköpostiosoite ja yritä uudelleen.",
+    "passwordRejected": "Käytä vahvempaa salasanaa ja yritä uudelleen.",
+    "requiredTitle": "Kirjaudu varataksesi",
+    "required": "Sinun täytyy kirjautua ennen varauksen tekemistä.",
+    "unauthorizedTitle": "Oikeus vaaditaan",
+    "staffUnauthorized": "Tililläsi ei ole henkilöstöoikeuksia yhteenkään yksikköön.",
+    "adminUnauthorized": "Tililläsi ei ole ylläpito-oikeutta."
   },
   "common": {
     "loading": "Ladataan",

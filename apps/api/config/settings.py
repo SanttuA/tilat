@@ -11,6 +11,17 @@ DEBUG = os.getenv("DJANGO_DEBUG", "true").lower() == "true"
 ALLOWED_HOSTS = [host for host in os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",") if host]
 
 
+def positive_int_from_env(name: str, default: str) -> int:
+    raw_value = os.getenv(name, default)
+    try:
+        value = int(raw_value)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a positive integer.") from exc
+    if value < 1:
+        raise ValueError(f"{name} must be a positive integer.")
+    return value
+
+
 def database_from_url(url: str | None) -> dict[str, object]:
     if not url:
         return {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
@@ -91,7 +102,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ["reservations.auth.OIDCBearerAuthentication"],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["reservations.auth.ProfileTokenAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
@@ -106,7 +117,4 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-OIDC_ISSUER = os.getenv("OIDC_ISSUER", "")
-OIDC_AUDIENCE = os.getenv("OIDC_CLIENT_ID", "reservation-mvp")
-OIDC_ADMIN_GROUP = os.getenv("AUTHENTIK_ADMIN_GROUP", "reservation-admins")
-OIDC_JWKS_CACHE_SECONDS = int(os.getenv("OIDC_JWKS_CACHE_SECONDS", "300"))
+PASSWORD_AUTH_TOKEN_TTL_DAYS = positive_int_from_env("PASSWORD_AUTH_TOKEN_TTL_DAYS", "30")

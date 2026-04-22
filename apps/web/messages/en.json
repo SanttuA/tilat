@@ -9,6 +9,7 @@
     "staff": "Staff",
     "admin": "Admin",
     "signIn": "Sign in",
+    "signUp": "Sign up",
     "signOut": "Sign out"
   },
   "language": {
@@ -38,7 +39,8 @@
     "note": "Message to staff",
     "submit": "Reserve selected time",
     "success": "Reservation submitted.",
-    "error": "Reservation could not be created."
+    "error": "Reservation could not be created.",
+    "missingDetails": "Required reservation details are missing."
   },
   "reservations": {
     "title": "My reservations",
@@ -71,6 +73,27 @@
   },
   "admin": {
     "title": "Admin overview"
+  },
+  "auth": {
+    "signInTitle": "Sign in",
+    "signUpTitle": "Create an account",
+    "email": "Email address",
+    "name": "Name",
+    "password": "Password",
+    "signInSubmit": "Sign in",
+    "signUpSubmit": "Sign up",
+    "needAccount": "Create an account",
+    "haveAccount": "Sign in with an existing account",
+    "invalidCredentials": "Check your email address and password.",
+    "signupFailed": "The account could not be created.",
+    "emailAlreadyExists": "An account with this email already exists. Sign in or use another address.",
+    "emailInvalid": "Check the email address and try again.",
+    "passwordRejected": "Use a stronger password and try again.",
+    "requiredTitle": "Sign in to reserve",
+    "required": "You need to sign in before making a reservation.",
+    "unauthorizedTitle": "Permission required",
+    "staffUnauthorized": "Your account does not have staff permissions for any unit.",
+    "adminUnauthorized": "Your account does not have admin permission."
   },
   "common": {
     "loading": "Loading",

@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import IntegrityError, transaction
+from django.db.models import Q
 from rest_framework import serializers
 
+from .auth import create_access_token
 from .models import (
     OpeningHours,
     Reservation,
@@ -12,6 +18,17 @@ from .models import (
     validate_localized_text,
 )
 from .services import create_reservation
+
+
+def normalize_email(value: str) -> str:
+    return value.strip().lower()
+
+
+def username_max_length() -> int | None:
+    return get_user_model()._meta.get_field("username").max_length
+
+
+SIGNUP_EMAIL_MAX_LENGTH = username_max_length()
 
 
 class LocalizedTextField(serializers.JSONField):
@@ -26,11 +43,87 @@ class LocalizedTextField(serializers.JSONField):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    isAdmin = serializers.BooleanField(source="is_admin_claim")
+    email = serializers.EmailField(source="user.email", read_only=True)
+    isAdmin = serializers.BooleanField(source="is_admin")
 
     class Meta:
         model = UserProfile
-        fields = ["id", "subject", "email", "name", "isAdmin"]
+        fields = ["id", "email", "name", "isAdmin"]
+
+
+class AuthSessionSerializer(serializers.Serializer):
+    token = serializers.CharField(read_only=True)
+    user = UserProfileSerializer(read_only=True)
+
+
+class SignupSerializer(serializers.Serializer):
+    email = serializers.EmailField(
+        max_length=SIGNUP_EMAIL_MAX_LENGTH,
+        error_messages={"max_length": f"Email must be {SIGNUP_EMAIL_MAX_LENGTH} characters or fewer."},
+    )
+    name = serializers.CharField(max_length=255, allow_blank=False, trim_whitespace=True)
+    password = serializers.CharField(write_only=True, trim_whitespace=False)
+
+    def validate_email(self, value: str) -> str:
+        email = normalize_email(value)
+        max_length = username_max_length()
+        if max_length is not None and len(email) > max_length:
+            raise serializers.ValidationError(f"Email must be {max_length} characters or fewer.")
+        if get_user_model().objects.filter(Q(email__iexact=email) | Q(username__iexact=email)).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return email
+
+    def validate(self, attrs):
+        User = get_user_model()
+        user = User(username=attrs["email"], email=attrs["email"])
+        try:
+            validate_password(attrs["password"], user=user)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError({"password": exc.messages}) from exc
+        return attrs
+
+    def create(self, validated_data):
+        User = get_user_model()
+        try:
+            with transaction.atomic():
+                user = User.objects.create_user(
+                    username=validated_data["email"],
+                    email=validated_data["email"],
+                    password=validated_data["password"],
+                )
+                profile = UserProfile.objects.create(user=user, name=validated_data["name"], is_admin=False)
+        except IntegrityError as exc:
+            raise serializers.ValidationError(
+                {"email": ["A user with this email already exists."]},
+            ) from exc
+        token, _ = create_access_token(profile)
+        return {"token": token, "user": profile}
+
+
+class SigninSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, trim_whitespace=False)
+
+    def validate(self, attrs):
+        email = normalize_email(attrs["email"])
+        users = get_user_model().objects.filter(
+            Q(email__iexact=email) | Q(username__iexact=email),
+            is_active=True,
+        )
+        matching_users = [user for user in users if user.check_password(attrs["password"])]
+        if len(matching_users) != 1:
+            raise serializers.ValidationError("Invalid email or password.")
+        user = matching_users[0]
+        try:
+            profile = user.reservation_profile
+        except UserProfile.DoesNotExist as exc:
+            raise serializers.ValidationError("User profile is missing.") from exc
+        attrs["profile"] = profile
+        return attrs
+
+    def create(self, validated_data):
+        token, _ = create_access_token(validated_data["profile"])
+        return {"token": token, "user": validated_data["profile"]}
 
 
 class UnitSerializer(serializers.ModelSerializer):

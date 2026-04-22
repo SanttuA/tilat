@@ -9,7 +9,7 @@ and API.
 - Browse reservable resources without signing in.
 - Search by Finnish or English resource/unit content.
 - View resource details and available time slots.
-- Sign in with authentik OIDC.
+- Sign up and sign in with an email address and password.
 - Reserve an available slot.
 - See and cancel own reservations.
 
@@ -24,7 +24,7 @@ and API.
 
 - Manage all units, resources, reservations, users, and memberships.
 - Use the Next staff/admin UI for normal work.
-- Use Django admin as a maintenance fallback.
+- Use Django admin as the backend maintenance and permission assignment fallback.
 
 ## Out Of Scope For V1
 

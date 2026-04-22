@@ -4,6 +4,54 @@
  */
 
 export interface paths {
+    "/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["signup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/signin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["signin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/signout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["signout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/resources": {
         parameters: {
             query?: never;
@@ -346,11 +394,27 @@ export interface components {
         UserProfile: {
             /** Format: uuid */
             id: string;
-            subject: string;
             /** Format: email */
             email: string;
             name: string;
             isAdmin: boolean;
+        };
+        SignupRequest: {
+            /** Format: email */
+            email: string;
+            name: string;
+            /** Format: password */
+            password: string;
+        };
+        SigninRequest: {
+            /** Format: email */
+            email: string;
+            /** Format: password */
+            password: string;
+        };
+        AuthSession: {
+            token: string;
+            user: components["schemas"]["UserProfile"];
         };
         Me: components["schemas"]["UserProfile"] & {
             staffUnitIds: string[];
@@ -401,6 +465,74 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    signup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignupRequest"];
+            };
+        };
+        responses: {
+            /** @description Signed-up session */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthSession"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+        };
+    };
+    signin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SigninRequest"];
+            };
+        };
+        responses: {
+            /** @description Signed-in session */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthSession"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+        };
+    };
+    signout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Signed out */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     listResources: {
         parameters: {
             query?: {

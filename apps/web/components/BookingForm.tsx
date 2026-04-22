@@ -27,6 +27,7 @@ export function BookingForm({
 
   return (
     <form action={formAction} className="card">
+      <input name="locale" type="hidden" value={locale} />
       <input name="resourceId" type="hidden" value={resource.id} />
       <h2>{t(messages, "resource.booking")}</h2>
       {state.status !== "idle" ? (

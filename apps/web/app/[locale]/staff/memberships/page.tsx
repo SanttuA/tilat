@@ -4,6 +4,7 @@ import { createStaffMembershipAction, deleteStaffMembershipAction } from "@/app/
 import { getAccessToken } from "@/lib/auth";
 import { getMe, listStaffMemberships, listStaffUnits } from "@/lib/api";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
+import { canUseStaff } from "@/lib/permissions";
 
 export default async function StaffMembershipsPage({
   params,
@@ -21,7 +22,7 @@ export default async function StaffMembershipsPage({
   if (!me) {
     redirect(`/${locale}/sign-in?next=/${locale}/staff/memberships`);
   }
-  if (!me.isAdmin && me.staffUnitIds.length === 0) {
+  if (!canUseStaff(me)) {
     return (
       <>
         <section className="hero" aria-labelledby="page-title">

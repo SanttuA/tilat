@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { getAccessToken } from "@/lib/auth";
 import { getMe, listStaffReservations, listStaffUnits } from "@/lib/api";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
+import { canUseStaff } from "@/lib/permissions";
 
 export default async function StaffPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params;
@@ -18,7 +19,7 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
   if (!me) {
     redirect(`/${locale}/sign-in?next=/${locale}/staff`);
   }
-  if (!me.isAdmin && me.staffUnitIds.length === 0) {
+  if (!canUseStaff(me)) {
     return (
       <>
         <section className="hero" aria-labelledby="page-title">

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getAccessToken } from "@/lib/auth";
 import { getMe, listStaffUnits } from "@/lib/api";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
+import { canUseAdmin } from "@/lib/permissions";
 
 export default async function AdminPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params;
@@ -16,7 +17,7 @@ export default async function AdminPage({ params }: { params: Promise<{ locale: 
   if (!me) {
     redirect(`/${locale}/sign-in?next=/${locale}/admin`);
   }
-  if (!me.isAdmin) {
+  if (!canUseAdmin(me)) {
     return (
       <>
         <section className="hero" aria-labelledby="page-title">

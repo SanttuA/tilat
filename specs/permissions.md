@@ -19,6 +19,18 @@ is temporarily unavailable.
 - Unit staff: manage assigned units.
 - Admin: manage everything.
 
+## Web Navigation Visibility
+
+Protected page links are shown only after validating the bearer token through
+the identity endpoint:
+
+- My reservations: valid signed-in users.
+- Staff: admins or users with at least one unit staff membership.
+- Admin: admins only.
+
+Navigation visibility is an affordance only. Protected pages, views, and
+serializers must still enforce their permission checks.
+
 ## Unit Staff
 
 Unit staff can manage reservations, resources, opening hours, bilingual content,

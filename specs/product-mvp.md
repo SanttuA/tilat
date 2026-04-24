@@ -4,6 +4,8 @@ The MVP is a bilingual, accessible reservation service for browsing resources,
 viewing availability, and managing bookings. It uses a product-specific domain
 and API.
 
+The product name is `Tilat` in every supported locale and is not translated.
+
 ## User Goals
 
 - Browse reservable resources without signing in.

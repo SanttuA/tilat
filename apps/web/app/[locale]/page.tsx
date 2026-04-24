@@ -19,7 +19,7 @@ export default async function ResourceListPage({
   return (
     <>
       <section className="hero" aria-labelledby="page-title">
-        <h1 id="page-title">{t(messages, "resources.title")}</h1>
+        <h1 id="page-title">{t(messages, "app.name")}</h1>
       </section>
       <form className="search-form" role="search">
         <label>

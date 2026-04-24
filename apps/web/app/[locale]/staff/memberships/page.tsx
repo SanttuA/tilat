@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { createStaffMembershipAction, deleteStaffMembershipAction } from "@/app/[locale]/actions";
+import { ActionFeedbackForm, SubmitButton } from "@/components/ActionFeedbackForm";
 import { getAccessToken } from "@/lib/auth";
 import { getMe, listStaffMemberships, listStaffUnits } from "@/lib/api";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
@@ -45,7 +46,7 @@ export default async function StaffMembershipsPage({
       <section className="hero" aria-labelledby="page-title">
         <h1 id="page-title">{t(messages, "staff.memberships")}</h1>
       </section>
-      <form action={createStaffMembershipAction} className="card">
+      <ActionFeedbackForm action={createStaffMembershipAction} className="card">
         <input name="locale" type="hidden" value={locale} />
         <h2>{t(messages, "staff.addMember")}</h2>
         <label>
@@ -62,10 +63,15 @@ export default async function StaffMembershipsPage({
           {t(messages, "staff.userId")}
           <input name="userId" required type="text" />
         </label>
-        <button className="button" disabled={units.length === 0} type="submit">
+        <SubmitButton
+          className="button"
+          disabled={units.length === 0}
+          pendingLabel={t(messages, "staff.addMemberPending")}
+          type="submit"
+        >
           {t(messages, "staff.addMember")}
-        </button>
-      </form>
+        </SubmitButton>
+      </ActionFeedbackForm>
       <section aria-labelledby="memberships-title">
         <h2 id="memberships-title">{t(messages, "staff.memberships")}</h2>
         <div className="table-wrap">
@@ -83,13 +89,17 @@ export default async function StaffMembershipsPage({
                   <td>{localized(membership.unit.name, locale)}</td>
                   <td>{membership.user.email || membership.user.name}</td>
                   <td>
-                    <form action={deleteStaffMembershipAction}>
+                    <ActionFeedbackForm action={deleteStaffMembershipAction}>
                       <input name="locale" type="hidden" value={locale} />
                       <input name="membershipId" type="hidden" value={membership.id} />
-                      <button className="secondary-button" type="submit">
+                      <SubmitButton
+                        className="secondary-button"
+                        pendingLabel={t(messages, "staff.removeMemberPending")}
+                        type="submit"
+                      >
                         {t(messages, "staff.remove")}
-                      </button>
-                    </form>
+                      </SubmitButton>
+                    </ActionFeedbackForm>
                   </td>
                 </tr>
               ))}

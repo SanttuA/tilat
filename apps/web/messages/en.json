@@ -16,6 +16,12 @@
     "fi": "Suomi",
     "en": "English"
   },
+  "feedback": {
+    "region": "Action feedback",
+    "successTitle": "Success",
+    "errorTitle": "Error",
+    "dismiss": "Dismiss"
+  },
   "resources": {
     "title": "Reserve a space",
     "searchLabel": "Search resources",
@@ -38,6 +44,7 @@
   "booking": {
     "note": "Message to staff",
     "submit": "Reserve selected time",
+    "pending": "Reserving",
     "success": "Reservation submitted.",
     "error": "Reservation could not be created.",
     "missingDetails": "Required reservation details are missing."
@@ -45,7 +52,10 @@
   "reservations": {
     "title": "My reservations",
     "empty": "You have no reservations.",
-    "cancel": "Cancel reservation"
+    "cancel": "Cancel reservation",
+    "cancelPending": "Cancelling",
+    "cancelSuccess": "Reservation cancelled.",
+    "cancelError": "Reservation could not be cancelled."
   },
   "state": {
     "requested": "Awaiting approval",
@@ -69,7 +79,26 @@
     "userId": "User ID",
     "resourceNameFi": "Resource name in Finnish",
     "resourceNameEn": "Resource name in English",
-    "save": "Save"
+    "save": "Save",
+    "reservationActionError": "Reservation could not be updated.",
+    "approvePending": "Approving",
+    "approveSuccess": "Reservation approved.",
+    "approveError": "Reservation could not be approved.",
+    "denyPending": "Denying",
+    "denySuccess": "Reservation denied.",
+    "denyError": "Reservation could not be denied.",
+    "cancelPending": "Cancelling",
+    "cancelSuccess": "Reservation cancelled.",
+    "cancelError": "Reservation could not be cancelled.",
+    "resourceSavePending": "Saving",
+    "resourceSaveSuccess": "Resource saved.",
+    "resourceSaveError": "Resource could not be saved.",
+    "addMemberPending": "Adding",
+    "addMemberSuccess": "Staff permission added.",
+    "addMemberError": "Staff permission could not be added.",
+    "removeMemberPending": "Removing",
+    "removeMemberSuccess": "Staff permission removed.",
+    "removeMemberError": "Staff permission could not be removed."
   },
   "admin": {
     "title": "Admin overview"
@@ -80,6 +109,7 @@
     "email": "Email address",
     "name": "Name",
     "password": "Password",
+    "pending": "Submitting",
     "signInSubmit": "Sign in",
     "signUpSubmit": "Sign up",
     "needAccount": "Create an account",

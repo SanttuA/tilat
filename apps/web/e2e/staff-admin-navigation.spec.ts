@@ -46,17 +46,23 @@ for (const locale of ["en", "fi"] as const) {
 
     await signInAs(page, locale, "staff@example.com", "/staff");
     await expect(page.getByRole("heading", { level: 1, name: messages.staffTitle })).toBeVisible();
-    await expect(page.getByRole("region", { name: messages.unitsTitle }).getByText(messages.unit)).toBeVisible();
+    await expect(
+      page.getByRole("region", { name: messages.unitsTitle }).getByText(messages.unit),
+    ).toBeVisible();
     await expect(page.getByRole("cell", { name: messages.resource }).first()).toBeVisible();
 
     await page.goto(`/${locale}/staff/resources`);
-    await expect(page.getByRole("heading", { level: 1, name: messages.resourcesTitle })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: messages.resourcesTitle }),
+    ).toBeVisible();
     const resourceCard = page.locator("article", { hasText: messages.resource });
     await expect(resourceCard.getByText(messages.unit)).toBeVisible();
     await expect(resourceCard.getByText(messages.resource)).toBeVisible();
 
     await page.goto(`/${locale}/staff/memberships`);
-    await expect(page.getByRole("heading", { level: 1, name: messages.membershipsTitle })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: messages.membershipsTitle }),
+    ).toBeVisible();
     const membershipRow = page.locator("tbody tr", { hasText: "staff@example.com" });
     await expect(membershipRow.getByText(messages.unit)).toBeVisible();
     await expect(membershipRow.getByText("staff@example.com")).toBeVisible();

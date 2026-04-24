@@ -128,6 +128,27 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "GET" && path === `/api/v1/resources/${resource.id}`) {
+    json(res, 200, resource);
+    return;
+  }
+
+  if (req.method === "GET" && path === `/api/v1/resources/${resource.id}/availability`) {
+    const date = url.searchParams.get("date") ?? "2026-04-24";
+    json(res, 200, {
+      resourceId: resource.id,
+      date,
+      slots: [
+        {
+          start: `${date}T09:00:00Z`,
+          end: `${date}T10:00:00Z`,
+          available: true,
+        },
+      ],
+    });
+    return;
+  }
+
   if (req.method === "POST" && path === "/api/v1/auth/signin") {
     const body = await bodyJson(req);
     const token =
@@ -178,6 +199,67 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "GET" && path === "/api/v1/staff/memberships") {
     json(res, 200, [membership]);
+    return;
+  }
+
+  if (req.method === "POST" && path === "/api/v1/reservations") {
+    const body = await bodyJson(req);
+    json(res, 201, {
+      ...reservation,
+      id: "88888888-8888-4888-8888-888888888888",
+      begin: body.begin,
+      end: body.end,
+      note: body.note ?? "",
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        isAdmin: user.isAdmin,
+      },
+    });
+    return;
+  }
+
+  if (req.method === "POST" && path === `/api/v1/reservations/${reservation.id}/cancel`) {
+    json(res, 200, { ...reservation, state: "cancelled" });
+    return;
+  }
+
+  if (req.method === "POST" && path === `/api/v1/staff/reservations/${reservation.id}/approve`) {
+    json(res, 200, { ...reservation, state: "confirmed" });
+    return;
+  }
+
+  if (req.method === "POST" && path === `/api/v1/staff/reservations/${reservation.id}/deny`) {
+    json(res, 200, { ...reservation, state: "denied" });
+    return;
+  }
+
+  if (req.method === "POST" && path === `/api/v1/staff/reservations/${reservation.id}/cancel`) {
+    json(res, 200, { ...reservation, state: "cancelled" });
+    return;
+  }
+
+  if (req.method === "POST" && path === "/api/v1/staff/resources") {
+    const body = await bodyJson(req);
+    json(res, 201, {
+      ...resource,
+      id: "99999999-9999-4999-8999-999999999999",
+      capacity: body.capacity,
+      name: body.name,
+      requiresApproval: body.requiresApproval,
+      slotMinutes: body.slotMinutes,
+    });
+    return;
+  }
+
+  if (req.method === "POST" && path === "/api/v1/staff/memberships") {
+    json(res, 201, membership);
+    return;
+  }
+
+  if (req.method === "DELETE" && path === `/api/v1/staff/memberships/${membership.id}`) {
+    json(res, 204);
     return;
   }
 

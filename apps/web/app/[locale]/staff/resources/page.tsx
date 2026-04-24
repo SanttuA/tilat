@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { createStaffResourceAction } from "@/app/[locale]/actions";
+import { ActionFeedbackForm, SubmitButton } from "@/components/ActionFeedbackForm";
 import { getAccessToken } from "@/lib/auth";
 import { getMe, listResources, listStaffUnits } from "@/lib/api";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
@@ -42,7 +43,7 @@ export default async function StaffResourcesPage({
       <section className="hero" aria-labelledby="page-title">
         <h1 id="page-title">{t(messages, "staff.resources")}</h1>
       </section>
-      <form
+      <ActionFeedbackForm
         action={createStaffResourceAction}
         className="card"
         aria-labelledby="resource-form-title"
@@ -87,10 +88,15 @@ export default async function StaffResourcesPage({
           <input name="requiresApproval" type="checkbox" />
           {t(messages, "resources.requiresApproval")}
         </label>
-        <button className="button" disabled={units.length === 0} type="submit">
+        <SubmitButton
+          className="button"
+          disabled={units.length === 0}
+          pendingLabel={t(messages, "staff.resourceSavePending")}
+          type="submit"
+        >
           {t(messages, "staff.save")}
-        </button>
-      </form>
+        </SubmitButton>
+      </ActionFeedbackForm>
       <section aria-labelledby="resources-title">
         <h2 id="resources-title">{t(messages, "staff.resources")}</h2>
         <div className="resource-grid">

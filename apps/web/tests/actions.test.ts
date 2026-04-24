@@ -1,8 +1,26 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { signOutAction, signUpAction } from "../app/[locale]/actions";
-import { signOut, signUp } from "@/lib/api";
+import {
+  cancelOwnReservationAction,
+  createStaffMembershipAction,
+  createStaffResourceAction,
+  deleteStaffMembershipAction,
+  reservationStaffAction,
+  signOutAction,
+  signUpAction,
+} from "../app/[locale]/actions";
+import {
+  cancelReservation,
+  createStaffMembership,
+  createStaffResource,
+  deleteStaffMembership,
+  signOut,
+  signUp,
+  staffReservationAction,
+} from "@/lib/api";
 import { clearAccessToken, getAccessToken, setAccessToken } from "@/lib/auth";
+import { initialFormState } from "@/lib/form-state";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 vi.mock("next/cache", () => ({
@@ -34,10 +52,16 @@ vi.mock("@/lib/auth", () => ({
 }));
 
 const clearAccessTokenMock = vi.mocked(clearAccessToken);
+const cancelReservationMock = vi.mocked(cancelReservation);
+const createStaffMembershipMock = vi.mocked(createStaffMembership);
+const createStaffResourceMock = vi.mocked(createStaffResource);
+const deleteStaffMembershipMock = vi.mocked(deleteStaffMembership);
 const getAccessTokenMock = vi.mocked(getAccessToken);
+const revalidatePathMock = vi.mocked(revalidatePath);
 const redirectMock = vi.mocked(redirect);
 const signOutMock = vi.mocked(signOut);
 const signUpMock = vi.mocked(signUp);
+const staffReservationActionMock = vi.mocked(staffReservationAction);
 const setAccessTokenMock = vi.mocked(setAccessToken);
 
 function signoutForm(locale = "en") {
@@ -55,6 +79,40 @@ function signupForm(locale = "en") {
   return formData;
 }
 
+function reservationForm(locale = "en") {
+  const formData = new FormData();
+  formData.set("locale", locale);
+  formData.set("reservationId", "reservation-id");
+  return formData;
+}
+
+function staffReservationForm(action = "approve", locale = "en") {
+  const formData = reservationForm(locale);
+  formData.set("action", action);
+  return formData;
+}
+
+function staffResourceForm(locale = "en") {
+  const formData = new FormData();
+  formData.set("locale", locale);
+  formData.set("unitId", "unit-id");
+  formData.set("nameFi", "Kokoushuone");
+  formData.set("nameEn", "Meeting room");
+  formData.set("capacity", "10");
+  formData.set("slotMinutes", "60");
+  formData.set("requiresApproval", "on");
+  return formData;
+}
+
+function staffMembershipForm(locale = "en") {
+  const formData = new FormData();
+  formData.set("locale", locale);
+  formData.set("unitId", "unit-id");
+  formData.set("userId", "user-id");
+  formData.set("membershipId", "membership-id");
+  return formData;
+}
+
 describe("signUpAction", () => {
   beforeEach(() => {
     vi.resetAllMocks();
@@ -69,9 +127,10 @@ describe("signUpAction", () => {
       error: { email: ["A user with this email already exists."] },
     } as never);
 
-    await expect(signUpAction({ status: "idle", message: "" }, signupForm("en"))).resolves.toEqual({
+    await expect(signUpAction(initialFormState, signupForm("en"))).resolves.toEqual({
       status: "error",
       message: "An account with this email already exists. Sign in or use another address.",
+      sequence: 1,
     });
 
     expect(setAccessTokenMock).not.toHaveBeenCalled();
@@ -84,10 +143,136 @@ describe("signUpAction", () => {
       error: { password: ["This password is too common."] },
     } as never);
 
-    await expect(signUpAction({ status: "idle", message: "" }, signupForm("fi"))).resolves.toEqual({
+    await expect(signUpAction(initialFormState, signupForm("fi"))).resolves.toEqual({
       status: "error",
       message: "Käytä vahvempaa salasanaa ja yritä uudelleen.",
+      sequence: 1,
     });
+  });
+});
+
+describe("reservation feedback actions", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it("returns localized success feedback when an own reservation is cancelled", async () => {
+    getAccessTokenMock.mockResolvedValue("active-token");
+    cancelReservationMock.mockResolvedValue({ data: {}, error: undefined } as never);
+
+    await expect(
+      cancelOwnReservationAction(initialFormState, reservationForm("en")),
+    ).resolves.toEqual({
+      status: "success",
+      message: "Reservation cancelled.",
+      sequence: 1,
+    });
+
+    expect(cancelReservationMock).toHaveBeenCalledWith("active-token", "reservation-id");
+    expect(revalidatePathMock).toHaveBeenCalledWith("/en/reservations", "page");
+  });
+
+  it("returns localized error feedback when an own cancellation fails", async () => {
+    getAccessTokenMock.mockResolvedValue("active-token");
+    cancelReservationMock.mockResolvedValue({
+      data: undefined,
+      error: { detail: "Failed" },
+    } as never);
+
+    await expect(
+      cancelOwnReservationAction(initialFormState, reservationForm("fi")),
+    ).resolves.toEqual({
+      status: "error",
+      message: "Varausta ei voitu perua.",
+      sequence: 1,
+    });
+
+    expect(revalidatePathMock).not.toHaveBeenCalled();
+  });
+
+  it("returns localized success feedback for staff reservation actions", async () => {
+    getAccessTokenMock.mockResolvedValue("staff-token");
+    staffReservationActionMock.mockResolvedValue({ data: {}, error: undefined } as never);
+
+    await expect(
+      reservationStaffAction(initialFormState, staffReservationForm("approve", "en")),
+    ).resolves.toEqual({
+      status: "success",
+      message: "Reservation approved.",
+      sequence: 1,
+    });
+
+    expect(staffReservationActionMock).toHaveBeenCalledWith(
+      "staff-token",
+      "reservation-id",
+      "approve",
+    );
+    expect(revalidatePathMock).toHaveBeenCalledWith("/en/staff", "page");
+  });
+});
+
+describe("staff feedback actions", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it("returns localized success feedback when a staff resource is created", async () => {
+    getAccessTokenMock.mockResolvedValue("staff-token");
+    createStaffResourceMock.mockResolvedValue({ data: {}, error: undefined } as never);
+
+    await expect(
+      createStaffResourceAction(initialFormState, staffResourceForm("en")),
+    ).resolves.toEqual({
+      status: "success",
+      message: "Resource saved.",
+      sequence: 1,
+    });
+
+    expect(createStaffResourceMock).toHaveBeenCalledWith("staff-token", {
+      unitId: "unit-id",
+      name: { fi: "Kokoushuone", en: "Meeting room" },
+      description: { fi: "", en: "" },
+      reservationInstructions: { fi: "", en: "" },
+      capacity: 10,
+      slotMinutes: 60,
+      requiresApproval: true,
+    });
+    expect(revalidatePathMock).toHaveBeenCalledWith("/en/staff/resources", "page");
+  });
+
+  it("returns localized success feedback when a staff membership is added", async () => {
+    getAccessTokenMock.mockResolvedValue("staff-token");
+    createStaffMembershipMock.mockResolvedValue({ data: {}, error: undefined } as never);
+
+    await expect(
+      createStaffMembershipAction(initialFormState, staffMembershipForm("fi")),
+    ).resolves.toEqual({
+      status: "success",
+      message: "Henkilöstöoikeus lisättiin.",
+      sequence: 1,
+    });
+
+    expect(createStaffMembershipMock).toHaveBeenCalledWith("staff-token", {
+      unitId: "unit-id",
+      userId: "user-id",
+    });
+    expect(revalidatePathMock).toHaveBeenCalledWith("/fi/staff/memberships", "page");
+  });
+
+  it("returns localized success feedback when a staff membership is removed", async () => {
+    getAccessTokenMock.mockResolvedValue("staff-token");
+    deleteStaffMembershipMock.mockResolvedValue({ data: undefined, error: undefined } as never);
+
+    await expect(
+      deleteStaffMembershipAction(initialFormState, staffMembershipForm("en")),
+    ).resolves.toEqual({
+      status: "success",
+      message: "Staff permission removed.",
+      sequence: 1,
+    });
+
+    expect(deleteStaffMembershipMock).toHaveBeenCalledWith("staff-token", "membership-id");
+    expect(revalidatePathMock).toHaveBeenCalledWith("/en/staff/memberships", "page");
   });
 });
 

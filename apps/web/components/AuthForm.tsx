@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
-import type { FormState } from "@/app/[locale]/actions";
+import { SubmitButton } from "@/components/ActionFeedbackForm";
+import { initialFormState, type FormState } from "@/lib/form-state";
 import type { Locale, Messages } from "../lib/i18n";
 import { t } from "../lib/i18n";
-
-const initialState: FormState = { status: "idle", message: "" };
 
 export function AuthForm({
   action,
@@ -22,7 +21,7 @@ export function AuthForm({
   mode: "sign-in" | "sign-up";
   next?: string;
 }) {
-  const [state, formAction, pending] = useActionState(action, initialState);
+  const [state, formAction, pending] = useActionState(action, initialFormState);
   const isSignup = mode === "sign-up";
   const errorId = `${mode}-error`;
   const alternateHref = isSignup ? `/${locale}/sign-in` : `/${locale}/sign-up`;
@@ -30,6 +29,7 @@ export function AuthForm({
   return (
     <form
       action={formAction}
+      aria-busy={pending || undefined}
       aria-describedby={state.status === "error" ? errorId : undefined}
       className="card auth-card"
     >
@@ -60,9 +60,9 @@ export function AuthForm({
           type="password"
         />
       </label>
-      <button className="button" disabled={pending} type="submit">
+      <SubmitButton className="button" pendingLabel={t(messages, "auth.pending")} type="submit">
         {isSignup ? t(messages, "auth.signUpSubmit") : t(messages, "auth.signInSubmit")}
-      </button>
+      </SubmitButton>
       <p>
         <Link href={alternateHref}>
           {isSignup ? t(messages, "auth.haveAccount") : t(messages, "auth.needAccount")}

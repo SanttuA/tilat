@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 
 import "../globals.css";
+import { FeedbackProvider } from "@/components/Feedback";
 import { Header } from "@/components/Header";
 import { getMessages, isLocale, type Locale, t } from "@/lib/i18n";
 
@@ -40,15 +41,17 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <a className="skip-link" href="#main">
-            {t(messages, "app.skip")}
-          </a>
-          <div className="shell">
-            <Header locale={locale} messages={messages} />
-            <main className="page" id="main" tabIndex={-1}>
-              {children}
-            </main>
-          </div>
+          <FeedbackProvider messages={messages}>
+            <a className="skip-link" href="#main">
+              {t(messages, "app.skip")}
+            </a>
+            <div className="shell">
+              <Header locale={locale} messages={messages} />
+              <main className="page" id="main" tabIndex={-1}>
+                {children}
+              </main>
+            </div>
+          </FeedbackProvider>
         </NextIntlClientProvider>
       </body>
     </html>

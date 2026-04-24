@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { reservationStaffAction } from "@/app/[locale]/actions";
+import { ActionFeedbackForm, SubmitButton } from "@/components/ActionFeedbackForm";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getAccessToken } from "@/lib/auth";
 import { getMe, listStaffReservations, listStaffUnits } from "@/lib/api";
@@ -73,24 +74,37 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
                     <StatusBadge messages={messages} state={reservation.state} />
                   </td>
                   <td>
-                    <form action={reservationStaffAction} className="actions">
+                    <ActionFeedbackForm action={reservationStaffAction} className="actions">
                       <input name="locale" type="hidden" value={locale} />
                       <input name="reservationId" type="hidden" value={reservation.id} />
-                      <button className="button" name="action" type="submit" value="approve">
+                      <SubmitButton
+                        className="button"
+                        name="action"
+                        pendingLabel={t(messages, "staff.approvePending")}
+                        type="submit"
+                        value="approve"
+                      >
                         {t(messages, "staff.approve")}
-                      </button>
-                      <button className="secondary-button" name="action" type="submit" value="deny">
+                      </SubmitButton>
+                      <SubmitButton
+                        className="secondary-button"
+                        name="action"
+                        pendingLabel={t(messages, "staff.denyPending")}
+                        type="submit"
+                        value="deny"
+                      >
                         {t(messages, "staff.deny")}
-                      </button>
-                      <button
+                      </SubmitButton>
+                      <SubmitButton
                         className="secondary-button danger"
                         name="action"
+                        pendingLabel={t(messages, "staff.cancelPending")}
                         type="submit"
                         value="cancel"
                       >
                         {t(messages, "staff.cancel")}
-                      </button>
-                    </form>
+                      </SubmitButton>
+                    </ActionFeedbackForm>
                   </td>
                 </tr>
               ))}

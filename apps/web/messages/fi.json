@@ -16,6 +16,12 @@
     "fi": "Suomi",
     "en": "English"
   },
+  "feedback": {
+    "region": "Toimintojen palaute",
+    "successTitle": "Onnistui",
+    "errorTitle": "Virhe",
+    "dismiss": "Sulje"
+  },
   "resources": {
     "title": "Varaa tila",
     "searchLabel": "Hae tiloja",
@@ -38,6 +44,7 @@
   "booking": {
     "note": "Viesti henkilöstölle",
     "submit": "Varaa valittu aika",
+    "pending": "Varataan",
     "success": "Varaus lähetettiin.",
     "error": "Varausta ei voitu tehdä.",
     "missingDetails": "Varauksen pakollisia tietoja puuttuu."
@@ -45,7 +52,10 @@
   "reservations": {
     "title": "Omat varaukset",
     "empty": "Sinulla ei ole varauksia.",
-    "cancel": "Peru varaus"
+    "cancel": "Peru varaus",
+    "cancelPending": "Perutaan",
+    "cancelSuccess": "Varaus peruttiin.",
+    "cancelError": "Varausta ei voitu perua."
   },
   "state": {
     "requested": "Odottaa hyväksyntää",
@@ -69,7 +79,26 @@
     "userId": "Käyttäjän tunniste",
     "resourceNameFi": "Tilan nimi suomeksi",
     "resourceNameEn": "Tilan nimi englanniksi",
-    "save": "Tallenna"
+    "save": "Tallenna",
+    "reservationActionError": "Varausta ei voitu päivittää.",
+    "approvePending": "Hyväksytään",
+    "approveSuccess": "Varaus hyväksyttiin.",
+    "approveError": "Varausta ei voitu hyväksyä.",
+    "denyPending": "Hylätään",
+    "denySuccess": "Varaus hylättiin.",
+    "denyError": "Varausta ei voitu hylätä.",
+    "cancelPending": "Perutaan",
+    "cancelSuccess": "Varaus peruttiin.",
+    "cancelError": "Varausta ei voitu perua.",
+    "resourceSavePending": "Tallennetaan",
+    "resourceSaveSuccess": "Tila tallennettiin.",
+    "resourceSaveError": "Tilaa ei voitu tallentaa.",
+    "addMemberPending": "Lisätään",
+    "addMemberSuccess": "Henkilöstöoikeus lisättiin.",
+    "addMemberError": "Henkilöstöoikeutta ei voitu lisätä.",
+    "removeMemberPending": "Poistetaan",
+    "removeMemberSuccess": "Henkilöstöoikeus poistettiin.",
+    "removeMemberError": "Henkilöstöoikeutta ei voitu poistaa."
   },
   "admin": {
     "title": "Ylläpidon yleisnäkymä"
@@ -80,6 +109,7 @@
     "email": "Sähköpostiosoite",
     "name": "Nimi",
     "password": "Salasana",
+    "pending": "Lähetetään",
     "signInSubmit": "Kirjaudu",
     "signUpSubmit": "Rekisteröidy",
     "needAccount": "Luo tili",

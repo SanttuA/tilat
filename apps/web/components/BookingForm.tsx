@@ -2,12 +2,12 @@
 
 import { useActionState } from "react";
 
-import type { FormState } from "@/app/[locale]/actions";
+import { SubmitButton } from "@/components/ActionFeedbackForm";
+import { useActionFeedback } from "@/components/Feedback";
+import { initialFormState, type FormState } from "@/lib/form-state";
 import type { Locale, Messages } from "@/lib/i18n";
 import { localized, t } from "@/lib/i18n";
 import type { components } from "@reservation/api-client";
-
-const initialState: FormState = { status: "idle", message: "" };
 
 export function BookingForm({
   locale,
@@ -22,19 +22,23 @@ export function BookingForm({
   availability: components["schemas"]["Availability"];
   action: (state: FormState, formData: FormData) => Promise<FormState>;
 }) {
-  const [state, formAction, pending] = useActionState(action, initialState);
+  const [state, formAction, pending] = useActionState(action, initialFormState);
+  useActionFeedback(state);
   const availableSlots = availability.slots.filter((slot) => slot.available);
+  const errorId = "booking-error";
 
   return (
-    <form action={formAction} className="card">
+    <form
+      action={formAction}
+      aria-busy={pending || undefined}
+      aria-describedby={state.status === "error" ? errorId : undefined}
+      className="card"
+    >
       <input name="locale" type="hidden" value={locale} />
       <input name="resourceId" type="hidden" value={resource.id} />
       <h2>{t(messages, "resource.booking")}</h2>
-      {state.status !== "idle" ? (
-        <div
-          className={`status ${state.status === "error" ? "error" : ""}`}
-          role={state.status === "error" ? "alert" : "status"}
-        >
+      {state.status === "error" ? (
+        <div className="status error" id={errorId}>
           {state.message}
         </div>
       ) : null}
@@ -66,9 +70,14 @@ export function BookingForm({
         {t(messages, "booking.note")}
         <textarea name="note" />
       </label>
-      <button className="button" disabled={pending || availableSlots.length === 0} type="submit">
+      <SubmitButton
+        className="button"
+        disabled={availableSlots.length === 0}
+        pendingLabel={t(messages, "booking.pending")}
+        type="submit"
+      >
         {t(messages, "booking.submit")}
-      </button>
+      </SubmitButton>
     </form>
   );
 }

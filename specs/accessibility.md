@@ -22,6 +22,14 @@ Finnish and English.
 Slots must be native buttons or radio controls with names that include resource,
 date, start time, end time, and availability state.
 
+## Action Feedback
+
+Async user actions must provide localized, accessible feedback. Success messages
+may be transient when announced with polite live regions and enough time to read.
+Error messages must remain visible until dismissed, replaced, or the user leaves
+the page. Dismiss controls must have accessible names, feedback must not rely on
+color alone, and motion must respect reduced-motion preferences.
+
 ## Staff Data Views
 
 Tables must expose semantic headers and support keyboard use. On narrow screens,

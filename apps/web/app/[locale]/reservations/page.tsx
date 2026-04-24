@@ -1,4 +1,5 @@
 import { StatusBadge } from "@/components/StatusBadge";
+import { ActionFeedbackForm, SubmitButton } from "@/components/ActionFeedbackForm";
 import { cancelOwnReservationAction } from "@/app/[locale]/actions";
 import { getAccessToken } from "@/lib/auth";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
@@ -47,17 +48,18 @@ export default async function ReservationsPage({
                   <StatusBadge messages={messages} state={reservation.state} />
                 </td>
                 <td>
-                  <form action={cancelOwnReservationAction}>
+                  <ActionFeedbackForm action={cancelOwnReservationAction}>
                     <input name="locale" type="hidden" value={locale} />
                     <input name="reservationId" type="hidden" value={reservation.id} />
-                    <button
+                    <SubmitButton
                       className="secondary-button"
                       disabled={reservation.state === "cancelled"}
+                      pendingLabel={t(messages, "reservations.cancelPending")}
                       type="submit"
                     >
                       {t(messages, "reservations.cancel")}
-                    </button>
-                  </form>
+                    </SubmitButton>
+                  </ActionFeedbackForm>
                 </td>
               </tr>
             ))}

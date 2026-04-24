@@ -164,6 +164,7 @@ class ReservationCancelView(views.APIView):
 
 class StaffUnitsView(generics.ListAPIView):
     permission_classes = [IsStaffOrAdmin]
+    pagination_class = None
     serializer_class = UnitSerializer
 
     def get_queryset(self):
@@ -254,6 +255,7 @@ class StaffReservationActionView(views.APIView):
 
 class StaffMembershipListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsStaffOrAdmin]
+    pagination_class = None
 
     def get_serializer_class(self):
         if self.request.method == "POST":

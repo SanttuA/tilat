@@ -13,6 +13,7 @@ const copy = {
     signIn: "Sign in",
     staffTitle: "Staff workspace",
     unit: "Central Library",
+    unitsTitle: "Units",
   },
   fi: {
     adminTitle: "Ylläpidon yleisnäkymä",
@@ -24,6 +25,7 @@ const copy = {
     signIn: "Kirjaudu",
     staffTitle: "Henkilöstön työtila",
     unit: "Keskustakirjasto",
+    unitsTitle: "Yksiköt",
   },
 } as const;
 
@@ -44,8 +46,8 @@ for (const locale of ["en", "fi"] as const) {
 
     await signInAs(page, locale, "staff@example.com", "/staff");
     await expect(page.getByRole("heading", { level: 1, name: messages.staffTitle })).toBeVisible();
-    await expect(page.getByText(messages.unit)).toBeVisible();
-    await expect(page.getByText(messages.resource)).toBeVisible();
+    await expect(page.getByRole("region", { name: messages.unitsTitle }).getByText(messages.unit)).toBeVisible();
+    await expect(page.getByRole("cell", { name: messages.resource }).first()).toBeVisible();
 
     await page.goto(`/${locale}/staff/resources`);
     await expect(page.getByRole("heading", { level: 1, name: messages.resourcesTitle })).toBeVisible();
@@ -70,6 +72,6 @@ for (const locale of ["en", "fi"] as const) {
 
     await page.goto(`/${locale}/staff`);
     await expect(page.getByRole("heading", { level: 1, name: messages.staffTitle })).toBeVisible();
-    await expect(page.getByText(messages.resource)).toBeVisible();
+    await expect(page.getByRole("cell", { name: messages.resource }).first()).toBeVisible();
   });
 }

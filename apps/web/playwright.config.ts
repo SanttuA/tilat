@@ -1,5 +1,15 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const mockApiOrigin = "http://127.0.0.1:3101/api/v1";
+const webServerEnv: Record<string, string> = Object.fromEntries(
+  Object.entries(process.env).filter((entry): entry is [string, string] => {
+    return typeof entry[1] === "string";
+  }),
+);
+webServerEnv.API_INTERNAL_ORIGIN ??= mockApiOrigin;
+webServerEnv.API_ORIGIN ??= mockApiOrigin;
+webServerEnv.COREPACK_HOME ??= "/tmp/corepack";
+
 export default defineConfig({
   testDir: "./e2e",
   timeout: 30_000,
@@ -18,7 +28,8 @@ export default defineConfig({
     {
       command:
         process.env.PLAYWRIGHT_WEB_COMMAND ??
-        "API_INTERNAL_ORIGIN=http://127.0.0.1:3101/api/v1 API_ORIGIN=http://127.0.0.1:3101/api/v1 COREPACK_HOME=/tmp/corepack corepack pnpm dev",
+        `API_INTERNAL_ORIGIN=${mockApiOrigin} API_ORIGIN=${mockApiOrigin} COREPACK_HOME=/tmp/corepack corepack pnpm dev`,
+      env: webServerEnv,
       url: "http://127.0.0.1:3000/fi",
       reuseExistingServer: true,
       timeout: 120_000,

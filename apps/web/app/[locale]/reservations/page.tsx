@@ -1,6 +1,7 @@
 import { StatusBadge } from "@/components/StatusBadge";
 import { ActionFeedbackForm, SubmitButton } from "@/components/ActionFeedbackForm";
 import { cancelOwnReservationAction } from "@/app/[locale]/actions";
+import { ReservationAnswers } from "@/components/ReservationAnswers";
 import { getAccessToken } from "@/lib/auth";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
 import { listOwnReservationsForValidSession } from "@/lib/reservations";
@@ -33,6 +34,7 @@ export default async function ReservationsPage({
               <th scope="col">{t(messages, "resources.title")}</th>
               <th scope="col">{t(messages, "common.time")}</th>
               <th scope="col">{t(messages, "common.status")}</th>
+              <th scope="col">{t(messages, "reservationForm.answers")}</th>
               <th scope="col">{t(messages, "common.actions")}</th>
             </tr>
           </thead>
@@ -46,6 +48,9 @@ export default async function ReservationsPage({
                 </td>
                 <td>
                   <StatusBadge messages={messages} state={reservation.state} />
+                </td>
+                <td>
+                  <ReservationAnswers answers={reservation.formAnswers} messages={messages} />
                 </td>
                 <td>
                   <ActionFeedbackForm action={cancelOwnReservationAction}>

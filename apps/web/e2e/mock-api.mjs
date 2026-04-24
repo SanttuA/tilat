@@ -22,6 +22,13 @@ const resource = {
     fi: "Saavu kirjaston palvelupisteelle ennen varausta.",
     en: "Check in at the library service desk before your reservation.",
   },
+  reservationForm: {
+    fields: [
+      { key: "name", required: true },
+      { key: "email", required: true },
+      { key: "additionalInfo", required: false },
+    ],
+  },
   capacity: 10,
   slotMinutes: 60,
   requiresApproval: true,
@@ -76,6 +83,11 @@ const reservation = {
   end: "2026-04-24T10:00:00Z",
   state: "requested",
   note: "",
+  formAnswers: {
+    name: "Demo User",
+    email: "user@example.com",
+    additionalInfo: "Needs a projector",
+  },
   createdAt: "2026-04-20T09:00:00Z",
   updatedAt: "2026-04-20T09:00:00Z",
 };
@@ -197,6 +209,11 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "GET" && path === "/api/v1/staff/resources") {
+    json(res, 200, { count: 1, results: [resource] });
+    return;
+  }
+
   if (req.method === "GET" && path === "/api/v1/staff/memberships") {
     json(res, 200, [membership]);
     return;
@@ -210,6 +227,7 @@ const server = http.createServer(async (req, res) => {
       begin: body.begin,
       end: body.end,
       note: body.note ?? "",
+      formAnswers: body.formAnswers ?? {},
       user: {
         id: user.id,
         email: user.email,
@@ -248,7 +266,17 @@ const server = http.createServer(async (req, res) => {
       capacity: body.capacity,
       name: body.name,
       requiresApproval: body.requiresApproval,
+      reservationForm: body.reservationForm,
       slotMinutes: body.slotMinutes,
+    });
+    return;
+  }
+
+  if (req.method === "PATCH" && path === `/api/v1/staff/resources/${resource.id}`) {
+    const body = await bodyJson(req);
+    json(res, 200, {
+      ...resource,
+      reservationForm: body.reservationForm ?? resource.reservationForm,
     });
     return;
   }

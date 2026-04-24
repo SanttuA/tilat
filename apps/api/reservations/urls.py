@@ -17,7 +17,7 @@ urlpatterns = [
     path("reservations", views.ReservationListCreateView.as_view(), name="reservation-list-create"),
     path("reservations/<uuid:pk>/cancel", views.ReservationCancelView.as_view(), name="reservation-cancel"),
     path("staff/units", views.StaffUnitsView.as_view(), name="staff-units"),
-    path("staff/resources", views.StaffResourceCreateView.as_view(), name="staff-resource-create"),
+    path("staff/resources", views.StaffResourceListCreateView.as_view(), name="staff-resource-list-create"),
     path("staff/resources/<uuid:pk>", views.StaffResourceUpdateView.as_view(), name="staff-resource-update"),
     path("staff/reservations", views.StaffReservationListView.as_view(), name="staff-reservations"),
     path(

@@ -22,6 +22,13 @@ Finnish and English.
 Slots must be native buttons or radio controls with names that include resource,
 date, start time, end time, and availability state.
 
+## Reservation Forms
+
+Reservation forms must render only configured fields. Every visible input must
+have a visible label, required state, autocomplete where appropriate, and errors
+connected with `aria-describedby`. Slot selection must move users to the
+reservation form page without losing keyboard access or screen reader context.
+
 ## Action Feedback
 
 Async user actions must provide localized, accessible feedback. Success messages

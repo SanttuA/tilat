@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { reservationStaffAction } from "@/app/[locale]/actions";
 import { ActionFeedbackForm, SubmitButton } from "@/components/ActionFeedbackForm";
+import { ReservationAnswers } from "@/components/ReservationAnswers";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getAccessToken } from "@/lib/auth";
 import { getMe, listStaffReservations, listStaffUnits } from "@/lib/api";
@@ -61,6 +62,7 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
                 <th scope="col">{t(messages, "staff.user")}</th>
                 <th scope="col">{t(messages, "common.time")}</th>
                 <th scope="col">{t(messages, "common.status")}</th>
+                <th scope="col">{t(messages, "reservationForm.answers")}</th>
                 <th scope="col">{t(messages, "common.actions")}</th>
               </tr>
             </thead>
@@ -72,6 +74,9 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
                   <td>{new Date(reservation.begin).toLocaleString(locale)}</td>
                   <td>
                     <StatusBadge messages={messages} state={reservation.state} />
+                  </td>
+                  <td>
+                    <ReservationAnswers answers={reservation.formAnswers} messages={messages} />
                   </td>
                   <td>
                     <ActionFeedbackForm action={reservationStaffAction} className="actions">

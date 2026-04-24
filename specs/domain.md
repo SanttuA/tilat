@@ -23,6 +23,18 @@ language and display with Finnish fallback.
 - `Reservation`: user booking for one resource and time interval.
 - `UnitStaffMembership`: app-managed user-to-unit staff assignment.
 
+## Reservation Forms
+
+Each resource has one reservation form configuration. Forms use the predefined
+field keys `name`, `phoneNumber`, `email`, `address`, and `additionalInfo`.
+Each configured field can be required or optional. Existing resources default
+to required `name` and `email`.
+
+Reservation form answers are stored on the reservation and are visible to the
+reservation owner, unit staff who can manage the resource's unit, and admins.
+Unknown answer keys are rejected, required configured fields must be nonblank,
+and email answers must be valid email addresses.
+
 ## Reservation States
 
 - `requested`: created and awaiting approval.

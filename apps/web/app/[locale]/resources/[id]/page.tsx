@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { BookingForm } from "@/components/BookingForm";
-import { createReservationAction } from "@/app/[locale]/actions";
 import { getAvailability, getResource } from "@/lib/api";
 import { getAccessToken } from "@/lib/auth";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
@@ -58,7 +57,6 @@ export default async function ResourceDetailPage({
       </section>
       {canBook ? (
         <BookingForm
-          action={createReservationAction}
           availability={availability}
           locale={locale}
           messages={messages}

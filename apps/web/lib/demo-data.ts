@@ -20,6 +20,13 @@ export const demoResource: components["schemas"]["Resource"] = {
     fi: "Saavu kirjaston palvelupisteelle ennen varausta.",
     en: "Check in at the library service desk before your reservation.",
   },
+  reservationForm: {
+    fields: [
+      { key: "name", required: true },
+      { key: "email", required: true },
+      { key: "additionalInfo", required: false },
+    ],
+  },
   capacity: 10,
   slotMinutes: 60,
   requiresApproval: true,

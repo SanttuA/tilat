@@ -171,7 +171,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["listStaffResources"];
         put?: never;
         post: operations["createStaffResource"];
         delete?: never;
@@ -323,6 +323,7 @@ export interface components {
             name: components["schemas"]["LocalizedText"];
             description: components["schemas"]["LocalizedText"];
             reservationInstructions?: components["schemas"]["LocalizedText"];
+            reservationForm: components["schemas"]["ReservationForm"];
             capacity: number;
             /** @enum {integer} */
             slotMinutes: 15 | 30 | 45 | 60 | 90 | 120;
@@ -338,9 +339,21 @@ export interface components {
             name: components["schemas"]["LocalizedText"];
             description?: components["schemas"]["LocalizedText"];
             reservationInstructions?: components["schemas"]["LocalizedText"];
+            reservationForm?: components["schemas"]["ReservationForm"];
             capacity: number;
             slotMinutes: number;
             requiresApproval: boolean;
+        };
+        ResourcePatch: {
+            /** Format: uuid */
+            unitId?: string;
+            name?: components["schemas"]["LocalizedText"];
+            description?: components["schemas"]["LocalizedText"];
+            reservationInstructions?: components["schemas"]["LocalizedText"];
+            reservationForm?: components["schemas"]["ReservationForm"];
+            capacity?: number;
+            slotMinutes?: number;
+            requiresApproval?: boolean;
         };
         ResourcePage: {
             count: number;
@@ -362,6 +375,23 @@ export interface components {
         };
         /** @enum {string} */
         ReservationState: "requested" | "confirmed" | "denied" | "cancelled";
+        /** @enum {string} */
+        ReservationFormFieldKey: "name" | "phoneNumber" | "email" | "address" | "additionalInfo";
+        ReservationFormFieldConfig: {
+            key: components["schemas"]["ReservationFormFieldKey"];
+            required: boolean;
+        };
+        ReservationForm: {
+            fields: components["schemas"]["ReservationFormFieldConfig"][];
+        };
+        ReservationFormAnswers: {
+            name?: string;
+            phoneNumber?: string;
+            /** Format: email */
+            email?: string;
+            address?: string;
+            additionalInfo?: string;
+        };
         Reservation: {
             /** Format: uuid */
             id: string;
@@ -372,7 +402,9 @@ export interface components {
             /** Format: date-time */
             end: string;
             state: components["schemas"]["ReservationState"];
+            /** @deprecated */
             note?: string;
+            formAnswers: components["schemas"]["ReservationFormAnswers"];
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -385,7 +417,9 @@ export interface components {
             begin: string;
             /** Format: date-time */
             end: string;
+            /** @deprecated */
             note?: string;
+            formAnswers: components["schemas"]["ReservationFormAnswers"];
         };
         ReservationPage: {
             count: number;
@@ -710,6 +744,26 @@ export interface operations {
             };
         };
     };
+    listStaffResources: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Staff-manageable resource page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResourcePage"];
+                };
+            };
+        };
+    };
     createStaffResource: {
         parameters: {
             query?: never;
@@ -745,7 +799,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ResourceWrite"];
+                "application/json": components["schemas"]["ResourcePatch"];
             };
         };
         responses: {

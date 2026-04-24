@@ -5,7 +5,7 @@ import pytest
 from django.core.exceptions import ValidationError
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
-from reservations.models import OpeningHours, Resource, Unit
+from reservations.models import OpeningHours, Resource, Unit, default_reservation_form
 from reservations.services import availability_for_resource, create_reservation
 
 
@@ -55,9 +55,52 @@ def test_availability_uses_opening_hours(resource):
     assert all(slot.available for slot in slots)
 
 
-def test_overlapping_reservation_is_rejected(resource, user):
+def test_resource_defaults_to_name_and_email_reservation_form(resource):
+    assert resource.reservation_form == default_reservation_form()
+
+
+def test_reservation_form_required_answers_are_validated(resource, user):
     day = date(2026, 4, 20)
-    create_reservation(user=user, resource=resource, begin=aware(day, 9), end=aware(day, 10))
 
     with pytest.raises(DRFValidationError):
-        create_reservation(user=user, resource=resource, begin=aware(day, 9), end=aware(day, 10))
+        create_reservation(
+            user=user,
+            resource=resource,
+            begin=aware(day, 9),
+            end=aware(day, 10),
+            form_answers={"name": "User"},
+        )
+
+
+def test_reservation_form_answers_are_stored(resource, user):
+    day = date(2026, 4, 20)
+
+    reservation = create_reservation(
+        user=user,
+        resource=resource,
+        begin=aware(day, 9),
+        end=aware(day, 10),
+        form_answers={"name": "User", "email": "user@example.com"},
+    )
+
+    assert reservation.form_answers == {"name": "User", "email": "user@example.com"}
+
+
+def test_overlapping_reservation_is_rejected(resource, user):
+    day = date(2026, 4, 20)
+    create_reservation(
+        user=user,
+        resource=resource,
+        begin=aware(day, 9),
+        end=aware(day, 10),
+        form_answers={"name": "User", "email": "user@example.com"},
+    )
+
+    with pytest.raises(DRFValidationError):
+        create_reservation(
+            user=user,
+            resource=resource,
+            begin=aware(day, 9),
+            end=aware(day, 10),
+            form_answers={"name": "User", "email": "user@example.com"},
+        )

@@ -42,12 +42,31 @@
     "noSlots": "There are no available times for this date."
   },
   "booking": {
-    "note": "Message to staff",
-    "submit": "Reserve selected time",
-    "pending": "Reserving",
+    "continue": "Continue to reservation form",
+    "formTitle": "Reservation details",
+    "formSubmit": "Submit reservation",
+    "formPending": "Submitting",
+    "slotAvailable": "available",
+    "slotUnavailable": "unavailable",
+    "staleSlotTitle": "Choose another time",
+    "staleSlot": "The selected time is no longer available.",
+    "backToResource": "Back to available times",
+    "successTitle": "Reservation succeeded",
+    "viewReservation": "View reservation",
     "success": "Reservation submitted.",
     "error": "Reservation could not be created.",
     "missingDetails": "Required reservation details are missing."
+  },
+  "reservationForm": {
+    "answers": "Reservation details",
+    "noAnswers": "No details provided",
+    "fields": {
+      "name": "Name",
+      "phoneNumber": "Phone number",
+      "email": "Email address",
+      "address": "Address",
+      "additionalInfo": "Additional information"
+    }
   },
   "reservations": {
     "title": "My reservations",
@@ -79,6 +98,8 @@
     "userId": "User ID",
     "resourceNameFi": "Resource name in Finnish",
     "resourceNameEn": "Resource name in English",
+    "reservationForm": "Reservation form",
+    "fieldRequired": "Required",
     "save": "Save",
     "reservationActionError": "Reservation could not be updated.",
     "approvePending": "Approving",

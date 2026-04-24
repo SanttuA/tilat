@@ -1,10 +1,10 @@
 {
   "app": {
-    "name": "Reservation Space",
+    "name": "Tilat",
     "skip": "Skip to content"
   },
   "nav": {
-    "home": "Resources",
+    "home": "Tilat",
     "reservations": "My reservations",
     "staff": "Staff",
     "admin": "Admin",

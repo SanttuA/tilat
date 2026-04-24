@@ -20,6 +20,13 @@ describe("i18n", () => {
     expect(leafKeys(en).sort()).toEqual(leafKeys(fi).sort());
   });
 
+  it("uses Tilat as the untranslated app and home name", () => {
+    expect(fi.app.name).toBe("Tilat");
+    expect(en.app.name).toBe("Tilat");
+    expect(fi.nav.home).toBe("Tilat");
+    expect(en.nav.home).toBe("Tilat");
+  });
+
   it("uses Finnish fallback for missing localized content", () => {
     expect(localized({ fi: "Suomi", en: "" }, "en")).toBe("Suomi");
   });

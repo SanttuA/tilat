@@ -2,6 +2,7 @@ import { expect, type Locator, type Page, test } from "@playwright/test";
 
 const copy = {
   en: {
+    availability: "Available times",
     details: "Details",
     email: "Email address",
     languageNav: "Language",
@@ -12,6 +13,7 @@ const copy = {
     signIn: "Sign in",
   },
   fi: {
+    availability: "Vapaat ajat",
     details: "Tiedot",
     email: "Sähköpostiosoite",
     languageNav: "Kieli",
@@ -83,6 +85,31 @@ for (const locale of ["en", "fi"] as const) {
       }
     });
   }
+}
+
+for (const locale of ["en", "fi"] as const) {
+  test(`public resource detail links are routable in ${locale}`, async ({ page }) => {
+    const messages = copy[locale];
+    await page.context().clearCookies();
+    await page.goto(`/${locale}`);
+
+    const links = page.locator(".resource-card").getByRole("link", { name: messages.details });
+    const hrefs = await links.evaluateAll((elements) =>
+      elements.flatMap((element) => {
+        const href = element.getAttribute("href");
+        return href ? [href] : [];
+      }),
+    );
+    expect(hrefs.length, `${locale}: expected public resource detail links`).toBeGreaterThan(0);
+
+    for (const href of hrefs) {
+      await page.goto(href);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 2, name: messages.availability }),
+      ).toBeVisible();
+    }
+  });
 }
 
 async function signInAsStaff(page: Page, locale: keyof typeof copy) {

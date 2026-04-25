@@ -172,15 +172,31 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === "GET" && path === `/api/v1/resources/${resource.id}`) {
-    json(res, 200, resource);
+  const resourceDetailMatch = path.match(/^\/api\/v1\/resources\/([^/]+)$/);
+  if (req.method === "GET" && resourceDetailMatch) {
+    const requestedResource = publicResources.find(
+      (candidate) => candidate.id === decodeURIComponent(resourceDetailMatch[1]),
+    );
+    if (requestedResource) {
+      json(res, 200, requestedResource);
+      return;
+    }
+    json(res, 404, { detail: "Not found." });
     return;
   }
 
-  if (req.method === "GET" && path === `/api/v1/resources/${resource.id}/availability`) {
+  const resourceAvailabilityMatch = path.match(/^\/api\/v1\/resources\/([^/]+)\/availability$/);
+  if (req.method === "GET" && resourceAvailabilityMatch) {
+    const requestedResource = publicResources.find(
+      (candidate) => candidate.id === decodeURIComponent(resourceAvailabilityMatch[1]),
+    );
+    if (!requestedResource) {
+      json(res, 404, { detail: "Not found." });
+      return;
+    }
     const date = url.searchParams.get("date") ?? "2026-04-24";
     json(res, 200, {
-      resourceId: resource.id,
+      resourceId: requestedResource.id,
       date,
       slots: [
         {

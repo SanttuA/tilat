@@ -114,7 +114,7 @@ export async function listStaffResources(accessToken?: string) {
     if (error || !data) throw new Error("Staff resources failed");
     return data;
   } catch {
-    return { count: demoResources.length, results: demoResources };
+    return { count: 0, results: [] as components["schemas"]["Resource"][] };
   }
 }
 

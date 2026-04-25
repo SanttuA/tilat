@@ -112,7 +112,10 @@ def create_reservation(
     note: str = "",
     form_answers: object | None = None,
 ) -> Reservation:
-    normalized_answers = validate_reservation_form_answers(resource, form_answers or {})
+    normalized_answers = validate_reservation_form_answers(
+        resource,
+        {} if form_answers is None else form_answers,
+    )
     ensure_slot_available(resource, begin, end)
     state = Reservation.State.REQUESTED if resource.requires_approval else Reservation.State.CONFIRMED
     deprecated_note = normalized_answers.get("additionalInfo", note)

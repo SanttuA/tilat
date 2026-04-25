@@ -92,6 +92,32 @@ def test_create_reservation_rejects_unconfigured_answer_keys(resource, profile_f
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("invalid_answers", [[], False, ""])
+def test_create_reservation_rejects_falsey_non_object_form_answers(
+    invalid_answers,
+    resource,
+    profile_factory,
+):
+    user = profile_factory()
+    resource.reservation_form = {"fields": []}
+    resource.save(update_fields=["reservation_form"])
+
+    response = authorized_client(user).post(
+        "/api/v1/reservations",
+        {
+            "resourceId": str(resource.id),
+            "begin": aware(date(2026, 4, 20), 9).isoformat(),
+            "end": aware(date(2026, 4, 20), 10).isoformat(),
+            "formAnswers": invalid_answers,
+        },
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert "formAnswers" in response.data
+
+
+@pytest.mark.django_db
 def test_create_reservation_stores_form_answers(resource, profile_factory):
     user = profile_factory()
     resource.reservation_form = {

@@ -28,7 +28,9 @@ The product name is `Tilat` in every supported locale and is not translated.
 - Manage all units, resources, reservations, users, and memberships.
 - Configure the reservation form used by each resource.
 - Use the Next staff/admin UI for normal work.
-- Use Django admin as the backend maintenance and permission assignment fallback.
+- Use Django admin as the backend maintenance and permission assignment
+  fallback. Resource reservation form configuration must use structured controls
+  for the predefined fields rather than requiring admins to edit raw JSON.
 
 ## Out Of Scope For V1
 

@@ -4,6 +4,7 @@
     "skip": "Siirry sisältöön"
   },
   "nav": {
+    "primaryLabel": "Päävalikko",
     "home": "Tilat",
     "reservations": "Omat varaukset",
     "staff": "Henkilöstö",
@@ -13,6 +14,7 @@
     "signOut": "Kirjaudu ulos"
   },
   "language": {
+    "label": "Kieli",
     "fi": "Suomi",
     "en": "English"
   },

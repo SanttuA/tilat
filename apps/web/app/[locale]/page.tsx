@@ -40,9 +40,9 @@ export default async function ResourceListPage({
         {resources.results.length === 0 ? <p>{t(messages, "resources.empty")}</p> : null}
         <div className="resource-grid">
           {resources.results.map((resource) => (
-            <article className="card" key={resource.id}>
+            <article className="card resource-card" key={resource.id}>
               <h3>{localized(resource.name, locale)}</h3>
-              <p>{localized(resource.description, locale)}</p>
+              <p className="resource-description">{localized(resource.description, locale)}</p>
               <div className="meta">
                 <span className="pill">
                   {t(messages, "resources.capacity")}: {resource.capacity}

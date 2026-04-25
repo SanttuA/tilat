@@ -1,7 +1,19 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 const resourceId = "22222222-2222-4222-8222-222222222222";
+const authCopy = {
+  en: {
+    email: "Email address",
+    password: "Password",
+    signIn: "Sign in",
+  },
+  fi: {
+    email: "Sähköpostiosoite",
+    password: "Salasana",
+    signIn: "Kirjaudu",
+  },
+} as const;
 const reservationFormTitles = {
   en: "Reservation details",
   fi: "Varauksen tiedot",
@@ -41,13 +53,7 @@ test("supports keyboard navigation through the public booking flow", async ({ pa
 
 for (const locale of ["en", "fi"] as const) {
   test(`reservation form page has no detectable WCAG violations in ${locale}`, async ({ page }) => {
-    await page.context().addCookies([
-      {
-        name: "reservation_access_token",
-        value: "staff-token",
-        url: "http://127.0.0.1:3000",
-      },
-    ]);
+    await signInAsStaff(page, locale);
     await page.goto(
       `/${locale}/resources/${resourceId}/reserve?slot=${encodeURIComponent(
         "2026-04-24T09:00:00Z|2026-04-24T10:00:00Z",
@@ -61,4 +67,13 @@ for (const locale of ["en", "fi"] as const) {
       .analyze();
     expect(results.violations).toEqual([]);
   });
+}
+
+async function signInAsStaff(page: Page, locale: keyof typeof authCopy) {
+  const messages = authCopy[locale];
+  await page.goto(`/${locale}/sign-in`);
+  await page.getByLabel(messages.email).fill("staff@example.com");
+  await page.getByLabel(messages.password).fill("Local-demo-12345");
+  await page.getByRole("button", { name: messages.signIn }).click();
+  await expect(page).toHaveURL(new RegExp(`/${locale}/reservations$`));
 }

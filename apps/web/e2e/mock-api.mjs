@@ -36,6 +36,38 @@ const resource = {
   updatedAt: "2026-04-20T09:00:00Z",
 };
 
+const publicResources = [
+  resource,
+  {
+    ...resource,
+    id: "22222222-2222-4222-8222-333333333333",
+    name: {
+      fi: "Testipaikka erittäin pitkällä nimellä",
+      en: "Test resource with an exceptionally long name",
+    },
+    description: {
+      fi: "Tämä on pitkä kuvausteksti, jonka pitää rivittyä siististi kortissa ilman että metatiedot tai toimintopainike valuvat ulos kortin reunojen yli.",
+      en: "This long description text must wrap cleanly inside the card without pushing metadata or the action button outside the card boundaries.",
+    },
+    capacity: 5,
+    requiresApproval: false,
+  },
+  {
+    ...resource,
+    id: "22222222-2222-4222-8222-444444444444",
+    name: {
+      fi: "Testipaikka2",
+      en: "Test resource two",
+    },
+    description: {
+      fi: "Jotain descriptionia tästä. Jotain descriptionia tästä. Jotain descriptionia tästä. Jotain descriptionia tästä. Jotain descriptionia tästä.",
+      en: "Some descriptive content here. Some descriptive content here. Some descriptive content here. Some descriptive content here. Some descriptive content here.",
+    },
+    capacity: 4,
+    requiresApproval: false,
+  },
+];
+
 const users = {
   staff: {
     id: "44444444-4444-4444-8444-444444444444",
@@ -136,19 +168,35 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === "GET" && path === "/api/v1/resources") {
-    json(res, 200, { count: 1, results: [resource] });
+    json(res, 200, { count: publicResources.length, results: publicResources });
     return;
   }
 
-  if (req.method === "GET" && path === `/api/v1/resources/${resource.id}`) {
-    json(res, 200, resource);
+  const resourceDetailMatch = path.match(/^\/api\/v1\/resources\/([^/]+)$/);
+  if (req.method === "GET" && resourceDetailMatch) {
+    const requestedResource = publicResources.find(
+      (candidate) => candidate.id === decodeURIComponent(resourceDetailMatch[1]),
+    );
+    if (requestedResource) {
+      json(res, 200, requestedResource);
+      return;
+    }
+    json(res, 404, { detail: "Not found." });
     return;
   }
 
-  if (req.method === "GET" && path === `/api/v1/resources/${resource.id}/availability`) {
+  const resourceAvailabilityMatch = path.match(/^\/api\/v1\/resources\/([^/]+)\/availability$/);
+  if (req.method === "GET" && resourceAvailabilityMatch) {
+    const requestedResource = publicResources.find(
+      (candidate) => candidate.id === decodeURIComponent(resourceAvailabilityMatch[1]),
+    );
+    if (!requestedResource) {
+      json(res, 404, { detail: "Not found." });
+      return;
+    }
     const date = url.searchParams.get("date") ?? "2026-04-24";
     json(res, 200, {
-      resourceId: resource.id,
+      resourceId: requestedResource.id,
       date,
       slots: [
         {

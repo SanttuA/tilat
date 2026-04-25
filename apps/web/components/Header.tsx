@@ -19,8 +19,8 @@ export async function Header({ locale, messages }: { locale: Locale; messages: M
         <Link className="brand" href={href(prefix)}>
           {t(messages, "app.name")}
         </Link>
-        <nav aria-label="Primary">
-          <div className="nav">
+        <nav aria-label={t(messages, "nav.primaryLabel")} className="primary-nav">
+          <div className="nav-list">
             <Link href={href(prefix)}>{t(messages, "nav.home")}</Link>
             {canUseReservations(me) ? (
               <Link href={href(`${prefix}/reservations`)}>{t(messages, "nav.reservations")}</Link>
@@ -44,7 +44,7 @@ export async function Header({ locale, messages }: { locale: Locale; messages: M
             )}
           </div>
         </nav>
-        <LanguageSwitcher locale={locale} />
+        <LanguageSwitcher label={t(messages, "language.label")} locale={locale} />
       </div>
     </header>
   );

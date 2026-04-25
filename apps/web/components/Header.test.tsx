@@ -6,6 +6,8 @@ import { getAccessToken } from "@/lib/auth";
 import type { CurrentUser } from "@/lib/permissions";
 
 import en from "../messages/en.json";
+import fi from "../messages/fi.json";
+import type { Locale, Messages } from "../lib/i18n";
 import { Header } from "./Header";
 
 vi.mock("@/app/[locale]/actions", () => ({
@@ -38,8 +40,8 @@ function currentUser(overrides: Partial<CurrentUser> = {}): CurrentUser {
   };
 }
 
-async function renderHeader() {
-  render(await Header({ locale: "en", messages: en }));
+async function renderHeader(locale: Locale = "en", messages: Messages = en) {
+  render(await Header({ locale, messages }));
 }
 
 describe("Header", () => {
@@ -63,6 +65,23 @@ describe("Header", () => {
     expect(screen.queryByRole("button", { name: "Sign out" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument();
+  });
+
+  it("uses localized navigation landmark names", async () => {
+    getAccessTokenMock.mockResolvedValue(undefined);
+
+    await renderHeader();
+
+    expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Language" })).toBeInTheDocument();
+
+    cleanup();
+    getAccessTokenMock.mockResolvedValue(undefined);
+
+    await renderHeader("fi", fi);
+
+    expect(screen.getByRole("navigation", { name: "Päävalikko" })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Kieli" })).toBeInTheDocument();
   });
 
   it("shows reservation navigation for regular users", async () => {

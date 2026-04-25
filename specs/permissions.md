@@ -15,7 +15,8 @@ is temporarily unavailable.
 ## Roles
 
 - Anonymous: browse public resources and availability.
-- User: create and cancel own reservations.
+- User: create reservations by completing the resource reservation form, and
+  view or cancel own reservations.
 - Unit staff: manage assigned units.
 - Admin: manage everything.
 
@@ -34,7 +35,7 @@ serializers must still enforce their permission checks.
 ## Unit Staff
 
 Unit staff can manage reservations, resources, opening hours, bilingual content,
-and staff memberships for their assigned units.
+per-resource reservation forms, and staff memberships for their assigned units.
 
 Unit staff cannot:
 

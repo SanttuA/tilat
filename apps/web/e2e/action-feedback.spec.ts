@@ -7,13 +7,15 @@ const copy = {
     approve: "Approve",
     approveSuccess: "Reservation approved.",
     bookingSuccess: "Reservation submitted.",
-    reserve: "Reserve selected time",
+    continue: "Continue to reservation form",
+    submit: "Submit reservation",
   },
   fi: {
     approve: "Hyväksy",
     approveSuccess: "Varaus hyväksyttiin.",
     bookingSuccess: "Varaus lähetettiin.",
-    reserve: "Varaa valittu aika",
+    continue: "Jatka varauslomakkeelle",
+    submit: "Lähetä varaus",
   },
 } as const;
 
@@ -34,7 +36,9 @@ for (const locale of ["en", "fi"] as const) {
     await authenticateAsStaff(page);
     await page.goto(`/${locale}/resources/${resourceId}`);
     await page.getByRole("radio").first().check();
-    await page.getByRole("button", { name: messages.reserve }).click();
+    await page.getByRole("button", { name: messages.continue }).click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/resources/${resourceId}/reserve`));
+    await page.getByRole("button", { name: messages.submit }).click();
 
     await expect(page.getByRole("status")).toContainText(messages.bookingSuccess);
     await expect(

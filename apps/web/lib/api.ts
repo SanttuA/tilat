@@ -107,6 +107,17 @@ export async function listStaffReservations(accessToken?: string) {
   }
 }
 
+export async function listStaffResources(accessToken?: string) {
+  if (!accessToken) return { count: 0, results: [] as components["schemas"]["Resource"][] };
+  try {
+    const { data, error } = await api(accessToken).GET("/staff/resources");
+    if (error || !data) throw new Error("Staff resources failed");
+    return data;
+  } catch {
+    return { count: 0, results: [] as components["schemas"]["Resource"][] };
+  }
+}
+
 export async function listStaffMemberships(accessToken?: string) {
   if (!accessToken) return [] as components["schemas"]["UnitStaffMembership"][];
   try {
@@ -149,6 +160,14 @@ export async function createStaffResource(
   body: components["schemas"]["ResourceWrite"],
 ) {
   return api(accessToken).POST("/staff/resources", { body });
+}
+
+export async function updateStaffResource(
+  accessToken: string,
+  id: string,
+  body: components["schemas"]["ResourcePatch"],
+) {
+  return api(accessToken).PATCH("/staff/resources/{id}", { params: { path: { id } }, body });
 }
 
 export async function createStaffMembership(

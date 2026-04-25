@@ -15,6 +15,7 @@ from .models import (
     Unit,
     UnitStaffMembership,
     UserProfile,
+    normalize_reservation_form,
     validate_localized_text,
 )
 from .services import create_reservation
@@ -40,6 +41,15 @@ class LocalizedTextField(serializers.JSONField):
         value = super().to_internal_value(data)
         validate_localized_text(value, require_all=self.require_all)
         return value
+
+
+class ReservationFormField(serializers.JSONField):
+    def to_internal_value(self, data):
+        value = super().to_internal_value(data)
+        return normalize_reservation_form(value)
+
+    def to_representation(self, value):
+        return normalize_reservation_form(value)
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -151,6 +161,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         source="reservation_instructions",
         required=False,
     )
+    reservationForm = ReservationFormField(source="reservation_form")
     slotMinutes = serializers.IntegerField(source="slot_minutes")
     requiresApproval = serializers.BooleanField(source="requires_approval")
     openingHours = OpeningHoursSerializer(source="opening_hours", many=True, read_only=True)
@@ -165,6 +176,7 @@ class ResourceSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "reservationInstructions",
+            "reservationForm",
             "capacity",
             "slotMinutes",
             "requiresApproval",
@@ -182,6 +194,7 @@ class ResourceWriteSerializer(serializers.ModelSerializer):
         source="reservation_instructions",
         required=False,
     )
+    reservationForm = ReservationFormField(source="reservation_form", required=False)
     slotMinutes = serializers.IntegerField(source="slot_minutes")
     requiresApproval = serializers.BooleanField(source="requires_approval")
 
@@ -192,6 +205,7 @@ class ResourceWriteSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "reservationInstructions",
+            "reservationForm",
             "capacity",
             "slotMinutes",
             "requiresApproval",
@@ -206,12 +220,24 @@ class ResourceWriteSerializer(serializers.ModelSerializer):
 class ReservationSerializer(serializers.ModelSerializer):
     resource = ResourceSerializer(read_only=True)
     user = UserProfileSerializer(read_only=True)
+    formAnswers = serializers.JSONField(source="form_answers")
     createdAt = serializers.DateTimeField(source="created_at", read_only=True)
     updatedAt = serializers.DateTimeField(source="updated_at", read_only=True)
 
     class Meta:
         model = Reservation
-        fields = ["id", "resource", "user", "begin", "end", "state", "note", "createdAt", "updatedAt"]
+        fields = [
+            "id",
+            "resource",
+            "user",
+            "begin",
+            "end",
+            "state",
+            "note",
+            "formAnswers",
+            "createdAt",
+            "updatedAt",
+        ]
 
 
 class ReservationCreateSerializer(serializers.Serializer):
@@ -219,6 +245,7 @@ class ReservationCreateSerializer(serializers.Serializer):
     begin = serializers.DateTimeField()
     end = serializers.DateTimeField()
     note = serializers.CharField(required=False, allow_blank=True)
+    formAnswers = serializers.JSONField(source="form_answers")
 
     def create(self, validated_data):
         return create_reservation(user=self.context["request"].user, **validated_data)

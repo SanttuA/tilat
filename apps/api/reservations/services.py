@@ -4,12 +4,14 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.validators import validate_email
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework import exceptions
 
-from .models import OpeningHours, Reservation, Resource, UserProfile
+from .models import OpeningHours, Reservation, Resource, UserProfile, normalize_reservation_form
 
 HELSINKI = ZoneInfo("Europe/Helsinki")
 BLOCKING_STATES = [Reservation.State.REQUESTED, Reservation.State.CONFIRMED]
@@ -71,6 +73,35 @@ def ensure_slot_available(resource: Resource, begin: datetime, end: datetime) ->
         raise exceptions.ValidationError({"non_field_errors": ["The selected time is outside opening hours."]})
 
 
+def validate_reservation_form_answers(resource: Resource, answers: object) -> dict[str, str]:
+    form = normalize_reservation_form(resource.reservation_form)
+    configured = {str(field["key"]): bool(field["required"]) for field in form["fields"]}
+    if not isinstance(answers, dict):
+        raise exceptions.ValidationError({"formAnswers": ["Reservation form answers must be an object."]})
+
+    normalized: dict[str, str] = {}
+    for key, value in answers.items():
+        if key not in configured:
+            raise exceptions.ValidationError({"formAnswers": [f"{key} is not configured for this resource."]})
+        if not isinstance(value, str):
+            raise exceptions.ValidationError({"formAnswers": [f"{key} must be a string."]})
+        value = value.strip()
+        if value:
+            normalized[str(key)] = value
+
+    missing = [key for key, required in configured.items() if required and key not in normalized]
+    if missing:
+        raise exceptions.ValidationError({"formAnswers": [f"Required fields are missing: {', '.join(missing)}."]})
+
+    if email := normalized.get("email"):
+        try:
+            validate_email(email)
+        except DjangoValidationError as exc:
+            raise exceptions.ValidationError({"formAnswers": exc.messages}) from exc
+
+    return normalized
+
+
 @transaction.atomic
 def create_reservation(
     *,
@@ -79,15 +110,22 @@ def create_reservation(
     begin: datetime,
     end: datetime,
     note: str = "",
+    form_answers: object | None = None,
 ) -> Reservation:
+    normalized_answers = validate_reservation_form_answers(
+        resource,
+        {} if form_answers is None else form_answers,
+    )
     ensure_slot_available(resource, begin, end)
     state = Reservation.State.REQUESTED if resource.requires_approval else Reservation.State.CONFIRMED
+    deprecated_note = normalized_answers.get("additionalInfo", note)
     return Reservation.objects.create(
         user=user,
         resource=resource,
         begin=begin,
         end=end,
-        note=note,
+        note=deprecated_note,
+        form_answers=normalized_answers,
         state=state,
     )
 

@@ -10,6 +10,7 @@ const copy = {
     password: "Password",
     resource: "Meeting room A",
     resourcesTitle: "Resources",
+    reservationForm: "Reservation form",
     signIn: "Sign in",
     staffTitle: "Staff workspace",
     unit: "Central Library",
@@ -22,6 +23,7 @@ const copy = {
     password: "Salasana",
     resource: "Kokoushuone A",
     resourcesTitle: "Tilat",
+    reservationForm: "Varauslomake",
     signIn: "Kirjaudu",
     staffTitle: "Henkilöstön työtila",
     unit: "Keskustakirjasto",
@@ -58,6 +60,9 @@ for (const locale of ["en", "fi"] as const) {
     const resourceCard = page.locator("article", { hasText: messages.resource });
     await expect(resourceCard.getByText(messages.unit)).toBeVisible();
     await expect(resourceCard.getByText(messages.resource)).toBeVisible();
+    await expect(
+      resourceCard.getByRole("group", { name: messages.reservationForm }),
+    ).toBeVisible();
 
     await page.goto(`/${locale}/staff/memberships`);
     await expect(

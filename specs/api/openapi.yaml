@@ -162,6 +162,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/Unit"
   /staff/resources:
+    get:
+      operationId: listStaffResources
+      responses:
+        "200":
+          description: Staff-manageable resource page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourcePage"
     post:
       operationId: createStaffResource
       requestBody:
@@ -187,7 +196,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ResourceWrite"
+              $ref: "#/components/schemas/ResourcePatch"
       responses:
         "200":
           description: Updated resource
@@ -367,7 +376,18 @@ components:
     Resource:
       type: object
       required:
-        [id, unit, name, description, capacity, slotMinutes, requiresApproval, createdAt, updatedAt]
+        [
+          id,
+          unit,
+          name,
+          description,
+          reservationForm,
+          capacity,
+          slotMinutes,
+          requiresApproval,
+          createdAt,
+          updatedAt,
+        ]
       properties:
         id:
           type: string
@@ -380,6 +400,8 @@ components:
           $ref: "#/components/schemas/LocalizedText"
         reservationInstructions:
           $ref: "#/components/schemas/LocalizedText"
+        reservationForm:
+          $ref: "#/components/schemas/ReservationForm"
         capacity:
           type: integer
           minimum: 1
@@ -407,6 +429,29 @@ components:
           $ref: "#/components/schemas/LocalizedText"
         reservationInstructions:
           $ref: "#/components/schemas/LocalizedText"
+        reservationForm:
+          $ref: "#/components/schemas/ReservationForm"
+        capacity:
+          type: integer
+          minimum: 1
+        slotMinutes:
+          type: integer
+        requiresApproval:
+          type: boolean
+    ResourcePatch:
+      type: object
+      properties:
+        unitId:
+          type: string
+          format: uuid
+        name:
+          $ref: "#/components/schemas/LocalizedText"
+        description:
+          $ref: "#/components/schemas/LocalizedText"
+        reservationInstructions:
+          $ref: "#/components/schemas/LocalizedText"
+        reservationForm:
+          $ref: "#/components/schemas/ReservationForm"
         capacity:
           type: integer
           minimum: 1
@@ -453,9 +498,42 @@ components:
     ReservationState:
       type: string
       enum: [requested, confirmed, denied, cancelled]
+    ReservationFormFieldKey:
+      type: string
+      enum: [name, phoneNumber, email, address, additionalInfo]
+    ReservationFormFieldConfig:
+      type: object
+      required: [key, required]
+      properties:
+        key:
+          $ref: "#/components/schemas/ReservationFormFieldKey"
+        required:
+          type: boolean
+    ReservationForm:
+      type: object
+      required: [fields]
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReservationFormFieldConfig"
+    ReservationFormAnswers:
+      type: object
+      properties:
+        name:
+          type: string
+        phoneNumber:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+        additionalInfo:
+          type: string
     Reservation:
       type: object
-      required: [id, resource, user, begin, end, state, createdAt, updatedAt]
+      required: [id, resource, user, begin, end, state, formAnswers, createdAt, updatedAt]
       properties:
         id:
           type: string
@@ -474,6 +552,9 @@ components:
           $ref: "#/components/schemas/ReservationState"
         note:
           type: string
+          deprecated: true
+        formAnswers:
+          $ref: "#/components/schemas/ReservationFormAnswers"
         createdAt:
           type: string
           format: date-time
@@ -482,7 +563,7 @@ components:
           format: date-time
     ReservationCreate:
       type: object
-      required: [resourceId, begin, end]
+      required: [resourceId, begin, end, formAnswers]
       properties:
         resourceId:
           type: string
@@ -495,6 +576,9 @@ components:
           format: date-time
         note:
           type: string
+          deprecated: true
+        formAnswers:
+          $ref: "#/components/schemas/ReservationFormAnswers"
     ReservationPage:
       type: object
       required: [count, results]

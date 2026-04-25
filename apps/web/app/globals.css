@@ -378,6 +378,51 @@ th {
   gap: 0.5rem;
 }
 
+.answer-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.answer-list div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.answer-list dt {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.answer-list dd {
+  margin: 0;
+}
+
+.reservation-form-config {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1rem;
+}
+
+.reservation-form-config legend {
+  font-weight: 800;
+  padding: 0 0.35rem;
+}
+
+.form-field-row,
+.resource-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form-field-row {
+  grid-template-columns: minmax(0, 1fr) minmax(9rem, auto);
+}
+
 .sr-only {
   clip: rect(0, 0, 0, 0);
   border: 0;
@@ -409,5 +454,9 @@ th {
 
   .nav {
     width: 100%;
+  }
+
+  .form-field-row {
+    grid-template-columns: 1fr;
   }
 }

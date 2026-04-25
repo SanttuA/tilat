@@ -13,11 +13,17 @@ import {
   signOut,
   signUp,
   staffReservationAction as sendStaffReservationAction,
+  updateStaffResource,
 } from "@/lib/api";
 import { signupErrorMessage } from "@/lib/api-errors";
 import { clearAccessToken, getAccessToken, setAccessToken } from "@/lib/auth";
 import { nextFormState, type FormState } from "@/lib/form-state";
 import { getMessages, isLocale, t, type Locale } from "@/lib/i18n";
+import {
+  reservationFormFieldKeys,
+  type ReservationForm,
+  type ReservationFormAnswers,
+} from "@/lib/reservation-form";
 
 export type { FormState } from "@/lib/form-state";
 
@@ -97,16 +103,18 @@ export async function createReservationAction(
   }
 
   const slot = String(formData.get("slot") ?? "");
-  const [begin, end] = slot.split("|");
+  const [slotBegin, slotEnd] = slot.split("|");
+  const begin = String(formData.get("begin") ?? slotBegin ?? "");
+  const end = String(formData.get("end") ?? slotEnd ?? "");
   const resourceId = String(formData.get("resourceId") ?? "");
-  const note = String(formData.get("note") ?? "");
+  const formAnswers = reservationAnswersFromFormData(formData);
 
   if (!begin || !end || !resourceId) {
     return nextFormState(_state, "error", t(messages, "booking.missingDetails"));
   }
 
   try {
-    const { error } = await createReservation(accessToken, { resourceId, begin, end, note });
+    const { error } = await createReservation(accessToken, { resourceId, begin, end, formAnswers });
     if (error) {
       return nextFormState(_state, "error", t(messages, "booking.error"));
     }
@@ -114,7 +122,7 @@ export async function createReservationAction(
     return nextFormState(_state, "error", t(messages, "booking.error"));
   }
 
-  revalidatePath("/[locale]/reservations", "page");
+  revalidatePath(localePath(formData, "/reservations"), "page");
   return nextFormState(_state, "success", t(messages, "booking.success"));
 }
 
@@ -179,6 +187,7 @@ export async function createStaffResourceAction(
   const capacity = Number(formData.get("capacity") ?? 0);
   const slotMinutes = Number(formData.get("slotMinutes") ?? 30);
   const requiresApproval = formData.get("requiresApproval") === "on";
+  const reservationForm = reservationFormFromFormData(formData);
 
   if (!unitId || !nameFi || !nameEn || capacity < 1) {
     return nextFormState(_state, "error", t(messages, "staff.resourceSaveError"));
@@ -193,6 +202,34 @@ export async function createStaffResourceAction(
       capacity,
       slotMinutes,
       requiresApproval,
+      reservationForm,
+    });
+    if (error) {
+      return nextFormState(_state, "error", t(messages, "staff.resourceSaveError"));
+    }
+  } catch {
+    return nextFormState(_state, "error", t(messages, "staff.resourceSaveError"));
+  }
+  revalidatePath(localePath(formData, "/staff/resources"), "page");
+  return nextFormState(_state, "success", t(messages, "staff.resourceSaveSuccess"));
+}
+
+export async function updateStaffResourceAction(
+  _state: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const locale = formLocale(formData);
+  const messages = getMessages(locale);
+  const accessToken = await getAccessToken();
+  if (!accessToken) return nextFormState(_state, "error", t(messages, "auth.required"));
+  const resourceId = String(formData.get("resourceId") ?? "");
+  if (!resourceId) {
+    return nextFormState(_state, "error", t(messages, "staff.resourceSaveError"));
+  }
+
+  try {
+    const { error } = await updateStaffResource(accessToken, resourceId, {
+      reservationForm: reservationFormFromFormData(formData),
     });
     if (error) {
       return nextFormState(_state, "error", t(messages, "staff.resourceSaveError"));
@@ -266,4 +303,29 @@ function staffReservationMessage(
   return result === "success"
     ? t(messages, "staff.cancelSuccess")
     : t(messages, "staff.cancelError");
+}
+
+function reservationAnswersFromFormData(formData: FormData): ReservationFormAnswers {
+  const answers: ReservationFormAnswers = {};
+  for (const key of reservationFormFieldKeys) {
+    const formKey = `answer.${key}`;
+    if (!formData.has(formKey)) continue;
+    const value = String(formData.get(formKey) ?? "");
+    if (value.trim()) {
+      answers[key] = value;
+    }
+  }
+  return answers;
+}
+
+function reservationFormFromFormData(formData: FormData): ReservationForm {
+  const selected = new Set(formData.getAll("reservationFields").map(String));
+  return {
+    fields: reservationFormFieldKeys
+      .filter((key) => selected.has(key))
+      .map((key) => ({
+        key,
+        required: formData.get(`reservationRequired.${key}`) === "on",
+      })),
+  };
 }

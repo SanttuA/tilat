@@ -42,12 +42,31 @@
     "noSlots": "Tälle päivälle ei ole vapaita aikoja."
   },
   "booking": {
-    "note": "Viesti henkilöstölle",
-    "submit": "Varaa valittu aika",
-    "pending": "Varataan",
+    "continue": "Jatka varauslomakkeelle",
+    "formTitle": "Varauksen tiedot",
+    "formSubmit": "Lähetä varaus",
+    "formPending": "Lähetetään",
+    "slotAvailable": "vapaa",
+    "slotUnavailable": "ei vapaana",
+    "staleSlotTitle": "Valitse toinen aika",
+    "staleSlot": "Valittu aika ei ole enää vapaana.",
+    "backToResource": "Takaisin vapaisiin aikoihin",
+    "successTitle": "Varaus onnistui",
+    "viewReservation": "Näytä varaus",
     "success": "Varaus lähetettiin.",
     "error": "Varausta ei voitu tehdä.",
     "missingDetails": "Varauksen pakollisia tietoja puuttuu."
+  },
+  "reservationForm": {
+    "answers": "Varauksen tiedot",
+    "noAnswers": "Tietoja ei annettu",
+    "fields": {
+      "name": "Nimi",
+      "phoneNumber": "Puhelinnumero",
+      "email": "Sähköpostiosoite",
+      "address": "Osoite",
+      "additionalInfo": "Lisätiedot"
+    }
   },
   "reservations": {
     "title": "Omat varaukset",
@@ -79,6 +98,8 @@
     "userId": "Käyttäjän tunniste",
     "resourceNameFi": "Tilan nimi suomeksi",
     "resourceNameEn": "Tilan nimi englanniksi",
+    "reservationForm": "Varauslomake",
+    "fieldRequired": "Pakollinen",
     "save": "Tallenna",
     "reservationActionError": "Varausta ei voitu päivittää.",
     "approvePending": "Hyväksytään",

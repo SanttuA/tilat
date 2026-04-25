@@ -1,11 +1,17 @@
 import { redirect } from "next/navigation";
+import type { components } from "@reservation/api-client";
 
-import { createStaffResourceAction } from "@/app/[locale]/actions";
+import { createStaffResourceAction, updateStaffResourceAction } from "@/app/[locale]/actions";
 import { ActionFeedbackForm, SubmitButton } from "@/components/ActionFeedbackForm";
 import { getAccessToken } from "@/lib/auth";
-import { getMe, listResources, listStaffUnits } from "@/lib/api";
+import { getMe, listStaffResources, listStaffUnits } from "@/lib/api";
 import { getMessages, isLocale, localized, type Locale, t } from "@/lib/i18n";
 import { canUseStaff } from "@/lib/permissions";
+import {
+  defaultReservationForm,
+  reservationFormFieldKeys,
+  reservationFormFieldLabels,
+} from "@/lib/reservation-form";
 
 export default async function StaffResourcesPage({
   params,
@@ -36,7 +42,7 @@ export default async function StaffResourcesPage({
       </>
     );
   }
-  const [units, resources] = await Promise.all([listStaffUnits(token), listResources()]);
+  const [units, resources] = await Promise.all([listStaffUnits(token), listStaffResources(token)]);
 
   return (
     <>
@@ -88,6 +94,7 @@ export default async function StaffResourcesPage({
           <input name="requiresApproval" type="checkbox" />
           {t(messages, "resources.requiresApproval")}
         </label>
+        <ReservationFormControls form={defaultReservationForm} messages={messages} />
         <SubmitButton
           className="button"
           disabled={units.length === 0}
@@ -104,10 +111,58 @@ export default async function StaffResourcesPage({
             <article className="card" key={resource.id}>
               <h3>{localized(resource.name, locale)}</h3>
               <p>{localized(resource.unit.name, locale)}</p>
+              <ActionFeedbackForm action={updateStaffResourceAction} className="resource-form">
+                <input name="locale" type="hidden" value={locale} />
+                <input name="resourceId" type="hidden" value={resource.id} />
+                <ReservationFormControls form={resource.reservationForm} messages={messages} />
+                <SubmitButton
+                  className="secondary-button"
+                  pendingLabel={t(messages, "staff.resourceSavePending")}
+                  type="submit"
+                >
+                  {t(messages, "staff.save")}
+                </SubmitButton>
+              </ActionFeedbackForm>
             </article>
           ))}
         </div>
       </section>
     </>
+  );
+}
+
+function ReservationFormControls({
+  form,
+  messages,
+}: {
+  form: components["schemas"]["ReservationForm"];
+  messages: ReturnType<typeof getMessages>;
+}) {
+  const selected = new Map(form.fields.map((field) => [field.key, field.required]));
+  return (
+    <fieldset className="reservation-form-config">
+      <legend>{t(messages, "staff.reservationForm")}</legend>
+      {reservationFormFieldKeys.map((key) => (
+        <div className="form-field-row" key={key}>
+          <label className="checkbox-row">
+            <input
+              defaultChecked={selected.has(key)}
+              name="reservationFields"
+              type="checkbox"
+              value={key}
+            />
+            {t(messages, reservationFormFieldLabels[key])}
+          </label>
+          <label className="checkbox-row">
+            <input
+              defaultChecked={selected.get(key) ?? false}
+              name={`reservationRequired.${key}`}
+              type="checkbox"
+            />
+            {t(messages, "staff.fieldRequired")}
+          </label>
+        </div>
+      ))}
+    </fieldset>
   );
 }

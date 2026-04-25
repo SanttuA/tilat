@@ -13,6 +13,23 @@ def empty_localized_text() -> dict[str, str]:
     return {"fi": "", "en": ""}
 
 
+RESERVATION_FORM_FIELD_ORDER = ("name", "phoneNumber", "email", "address", "additionalInfo")
+RESERVATION_FORM_FIELD_KEYS = set(RESERVATION_FORM_FIELD_ORDER)
+
+
+def default_reservation_form() -> dict[str, list[dict[str, object]]]:
+    return {
+        "fields": [
+            {"key": "name", "required": True},
+            {"key": "email", "required": True},
+        ],
+    }
+
+
+def empty_form_answers() -> dict[str, str]:
+    return {}
+
+
 def validate_localized_text(value: object, *, require_all: bool = False) -> None:
     if not isinstance(value, dict):
         raise ValidationError("Localized text must be an object.")
@@ -26,6 +43,35 @@ def validate_localized_text(value: object, *, require_all: bool = False) -> None
             raise ValidationError(f"Localized text value for {locale} must be a string.")
         if require_all and not value[locale].strip():
             raise ValidationError(f"Localized text value for {locale} is required.")
+
+
+def normalize_reservation_form(value: object) -> dict[str, list[dict[str, object]]]:
+    if not isinstance(value, dict):
+        raise ValidationError("Reservation form must be an object.")
+
+    fields = value.get("fields")
+    if not isinstance(fields, list):
+        raise ValidationError({"fields": "Reservation form fields must be a list."})
+
+    seen: set[str] = set()
+    normalized: list[dict[str, object]] = []
+    for field in fields:
+        if not isinstance(field, dict):
+            raise ValidationError({"fields": "Reservation form field must be an object."})
+        key = field.get("key")
+        required = field.get("required")
+        if key not in RESERVATION_FORM_FIELD_KEYS:
+            raise ValidationError({"fields": f"Unsupported reservation form field: {key}."})
+        if key in seen:
+            raise ValidationError({"fields": f"Duplicate reservation form field: {key}."})
+        if not isinstance(required, bool):
+            raise ValidationError({"fields": f"Reservation form field {key} requires a boolean required value."})
+        seen.add(key)
+        normalized.append({"key": key, "required": required})
+
+    order = {key: index for index, key in enumerate(RESERVATION_FORM_FIELD_ORDER)}
+    normalized.sort(key=lambda field: order[str(field["key"])])
+    return {"fields": normalized}
 
 
 class TimestampedUUIDModel(models.Model):
@@ -101,6 +147,7 @@ class Resource(TimestampedUUIDModel):
     name = models.JSONField()
     description = models.JSONField(default=empty_localized_text, blank=True)
     reservation_instructions = models.JSONField(default=empty_localized_text, blank=True)
+    reservation_form = models.JSONField(default=default_reservation_form)
     capacity = models.PositiveIntegerField(default=1)
     slot_minutes = models.PositiveIntegerField(default=60)
     requires_approval = models.BooleanField(default=False)
@@ -115,6 +162,7 @@ class Resource(TimestampedUUIDModel):
         validate_localized_text(self.name, require_all=True)
         validate_localized_text(self.description)
         validate_localized_text(self.reservation_instructions)
+        self.reservation_form = normalize_reservation_form(self.reservation_form)
         if self.slot_minutes not in {15, 30, 45, 60, 90, 120}:
             raise ValidationError({"slot_minutes": "Unsupported slot length."})
 
@@ -155,6 +203,7 @@ class Reservation(TimestampedUUIDModel):
     end = models.DateTimeField()
     state = models.CharField(max_length=20, choices=State.choices, default=State.REQUESTED)
     note = models.TextField(blank=True)
+    form_answers = models.JSONField(default=empty_form_answers, blank=True)
 
     class Meta:
         ordering = ["-begin"]

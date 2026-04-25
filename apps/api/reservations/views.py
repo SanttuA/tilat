@@ -173,9 +173,25 @@ class StaffUnitsView(generics.ListAPIView):
         return Unit.objects.filter(id__in=staff_unit_ids(self.request.user)).order_by("name")
 
 
-class StaffResourceCreateView(generics.CreateAPIView):
+class StaffResourceListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsStaffOrAdmin]
-    serializer_class = ResourceWriteSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ResourceWriteSerializer
+        return ResourceSerializer
+
+    def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Resource.objects.none()
+        queryset = (
+            Resource.objects.select_related("unit")
+            .prefetch_related("opening_hours")
+            .order_by("unit__name", "name")
+        )
+        if is_admin(self.request.user):
+            return queryset
+        return queryset.filter(unit_id__in=staff_unit_ids(self.request.user))
 
     def perform_create(self, serializer):
         unit = serializer.validated_data["unit"]

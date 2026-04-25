@@ -6,7 +6,7 @@ import en from "../messages/en.json";
 import fi from "../messages/fi.json";
 
 async function noopAction() {
-  return { status: "idle" as const, message: "" };
+  return { status: "idle" as const, message: "", sequence: 0 };
 }
 
 describe("AuthForm", () => {
